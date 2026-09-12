@@ -48,6 +48,7 @@ var _status_label: Label
 var _team_a_label: RichTextLabel
 var _team_b_label: RichTextLabel
 var _lock_button: Button
+var _start_button: Button
 
 func _ready() -> void:
 	_time_left = draft_seconds
@@ -55,6 +56,10 @@ func _ready() -> void:
 	_populate_hero_grid()
 	_update_team_display()
 	_refresh_timer_label()
+	# Surface the roster-load state directly -- an empty grid is always a
+	# HeroDatabase problem, never a UI one.
+	if _status_label != null:
+		_status_label.text = "%d heroes available -- pick one, or hit START MATCH" % HeroDatabase.count()
 
 func _process(delta: float) -> void:
 	if not timer_enabled or _locked:
@@ -100,10 +105,22 @@ func lock_in() -> bool:
 		picks.append(_selected_hero.hero_id)
 	if _lock_button != null:
 		_lock_button.disabled = true
+	if _start_button != null:
+		_start_button.disabled = true
 	_status_label.text = "LOCKED IN: %s" % _selected_hero.display_name
 	_update_team_display()
 	hero_locked.emit(team, _selected_hero)
 	return true
+
+## Skips the countdown entirely: locks in immediately, auto-picking a
+## suggested hero when nothing is selected. Bound to the START MATCH button
+## and also safe to call from tests.
+func start_match() -> void:
+	if _locked:
+		return
+	if _selected_hero == null:
+		select_hero(_suggest_hero())
+	lock_in()
 
 func random_hero() -> HeroDefinition:
 	var all: Array[HeroDefinition] = HeroDatabase.get_all_heroes()
@@ -275,6 +292,11 @@ func _build_ui() -> void:
 	_lock_button.disabled = true
 	_lock_button.pressed.connect(lock_in)
 	buttons.add_child(_lock_button)
+	_start_button = Button.new()
+	_start_button.text = "START MATCH"
+	_start_button.custom_minimum_size = Vector2(200, 48)
+	_start_button.pressed.connect(start_match)
+	buttons.add_child(_start_button)
 
 	var right := VBoxContainer.new()
 	right.custom_minimum_size = Vector2(460, 0)

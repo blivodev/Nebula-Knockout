@@ -71,3 +71,21 @@ func test_timer_auto_locks_at_zero() -> void:
 	await wait_process_frames(5)
 	assert_true(draft.is_locked(), "draft should auto-lock when the timer expires")
 	assert_eq(MatchState.team_a_picks.size(), 1, "auto-lock should still record exactly one pick")
+
+func test_start_match_skips_the_countdown_without_selection() -> void:
+	var draft: DraftScreen = _make_draft()
+	assert_false(draft.is_locked())
+	draft.start_match()
+	assert_true(draft.is_locked(), "START MATCH should lock immediately")
+	assert_not_null(draft.get_selected_hero(), "START MATCH should auto-pick a suggested hero")
+	assert_eq(MatchState.team_a_picks.size(), 1, "the auto-pick should be recorded")
+
+func test_start_match_keeps_an_existing_selection() -> void:
+	var draft: DraftScreen = _make_draft()
+	draft.select_hero(HeroDatabase.get_hero(&"pyra"))
+	draft.start_match()
+	assert_true(draft.is_locked(), "START MATCH should lock immediately")
+	assert_eq(
+		draft.get_selected_hero().hero_id, &"pyra",
+		"START MATCH must not override the player's selection"
+	)

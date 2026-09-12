@@ -279,7 +279,17 @@ all pass clean — 61/61 tests, no script errors):
   (`project.godot` `run/main_scene`). It owns Draft -> Match -> Post-match
   -> Play Again: locking a hero spawns the arena with that hero, the enemy
   team is auto-filled, and base destruction shows a victory/defeat summary.
-- GUT suite (**93 tests across 15 scripts**, all green): map symmetry,
+- **Draft screen**: hero grid, detail panel with portrait, per-pick countdown
+  with auto-lock, Random/Suggest, LOCK IN, and a **START MATCH** button that
+  skips the countdown entirely (auto-picks a suggested hero when nothing is
+  selected). The status bar shows the loaded roster count so a
+  HeroDatabase failure is visible, never a silent empty grid.
+- **Export-safe resource listing**: `HeroDatabase` / `ItemDatabase` list their
+  `res://` directories via `ResourceLoader.list_directory()` (with a
+  `DirAccess` fallback for editor/older builds) -- `DirAccess` on `res://`
+  only returns `.gd`/`.import` stubs inside an exported PCK, which silently
+  emptied the roster and shop in exported builds.
+- GUT suite (**95 tests across 15 scripts**, all green): map symmetry,
   economy, rig importer, hero database, hero scenes, items/inventory, shop,
   draft, hero mechanics, match flow, status effects, projectiles, knockback,
   resources and cast range, ground zones.

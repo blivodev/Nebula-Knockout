@@ -13,19 +13,36 @@ func _ready() -> void:
 
 func _load_all_heroes() -> void:
 	_heroes.clear()
-	var dir := DirAccess.open(HEROES_DIR)
+	for entry in _list_resource_dir(HEROES_DIR):
+		if not entry.ends_with(".tres"):
+			continue
+		var res: Resource = load(HEROES_DIR + entry)
+		if res is HeroDefinition:
+			_heroes[(res as HeroDefinition).hero_id] = res
+	if _heroes.is_empty():
+		push_warning("HeroDatabase: no HeroDefinition .tres resources loaded from %s." % HEROES_DIR)
+
+## Export-safe resource listing. DirAccess on res:// inside an exported PCK
+## only returns *.gd / *.import stubs (text resources are remapped to binary
+## and become invisible to directory scans), which silently emptied the
+## roster in exported builds. ResourceLoader.list_directory() reports the
+## editor-visible resource names in BOTH editor and exported builds.
+func _list_resource_dir(path: String) -> PackedStringArray:
+	if ResourceLoader.has_method("list_directory"):
+		return ResourceLoader.list_directory(path)
+	# Editor / older-engine fallback: plain filesystem scan.
+	var out := PackedStringArray()
+	var dir := DirAccess.open(path)
 	if dir == null:
-		push_warning("HeroDatabase: %s not found yet (no heroes authored)." % HEROES_DIR)
-		return
+		return out
 	dir.list_dir_begin()
 	var entry: String = dir.get_next()
 	while entry != "":
 		if not dir.current_is_dir() and entry.ends_with(".tres"):
-			var res: Resource = load(HEROES_DIR + entry)
-			if res is HeroDefinition:
-				_heroes[(res as HeroDefinition).hero_id] = res
+			out.append(entry)
 		entry = dir.get_next()
 	dir.list_dir_end()
+	return out
 
 func reload() -> void:
 	_load_all_heroes()
