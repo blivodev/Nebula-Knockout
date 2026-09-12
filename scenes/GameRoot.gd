@@ -38,6 +38,7 @@ func _clear_current() -> void:
 func _enter_draft() -> void:
 	_phase = Phase.DRAFT
 	_clear_current()
+	AudioDirector.stop_music(0.5)
 	MatchState.set_phase(MatchState.Phase.DRAFT)
 	MatchState.team_a_picks.clear()
 	MatchState.team_b_picks.clear()
@@ -65,6 +66,7 @@ func _auto_pick_enemy() -> void:
 func _enter_match() -> void:
 	_phase = Phase.MATCH
 	_clear_current()
+	AudioDirector.start_battle_music()
 	var arena: Node = TestArenaScene.instantiate()
 	arena.player_hero_id = _player_hero_id
 	if not MatchState.team_b_picks.is_empty():
@@ -74,6 +76,7 @@ func _enter_match() -> void:
 
 func _on_match_ended(winning_team: int) -> void:
 	_winning_team = winning_team
+	AudioDirector.play_victory()
 	_enter_post_match()
 
 func _enter_post_match() -> void:

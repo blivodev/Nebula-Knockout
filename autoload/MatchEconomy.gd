@@ -51,6 +51,8 @@ func spend_gold(player_id: int, amount: int) -> bool:
 func on_minion_last_hit(player_id: int) -> void:
 	if player_id < 0:
 		return
+	if player_id == 0:
+		AudioDirector.play_coin()
 	add_gold(player_id, MINION_LAST_HIT_GOLD)
 
 func on_neutral_camp_cleared(player_id: int) -> void:

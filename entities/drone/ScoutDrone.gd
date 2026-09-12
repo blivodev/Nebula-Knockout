@@ -62,6 +62,7 @@ func detonate() -> void:
 	if not _alive:
 		return
 	_alive = false
+	AudioDirector.play_explosion()
 	_apply_aoe_damage()
 	detonated.emit(global_position)
 	queue_free()

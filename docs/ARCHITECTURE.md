@@ -270,11 +270,21 @@ all pass clean — 61/61 tests, no script errors):
   (`spawn_enemy_hero`), driven by `_handle_bot_ai()` on `CharacterController`
   (`is_bot = true`). Bots acquire nearest targets, advance lanes, retreat at
   critical health, and cast abilities in range.
-- **Animation**: `HeroAnimator` (`core/`) is added automatically to every
-  hero's `Visual` node and gives procedural idle bob / walk sway / cast pop /
-  hit flash / dash stretch / death squash, driven by the state machine. This
-  is the stopgap until baked `SpriteFrames` flipbooks exist; it keeps working
-  unchanged once the Visual becomes an `AnimatedSprite2D`.
+- **Dynamic Animation & Facing**: `HeroAnimator` (`core/`) dynamically flips
+  hero sprites when moving or aiming left/right, with snappy brawler walk bounce,
+  stepping tilt, breathing bob, directional attack lunges, dash streaks, and
+  impact hit flinches.
+- **Arena Map Visuals**: `ArenaVisuals` renders a deep space void backdrop with
+  twinkling starfield, nebula gas clouds, a floating cosmic arena bridge with
+  high-tech deck panels, glowing cyan/red team borders, center neutral ring,
+  and glowing base dais platforms. `MainBuilding` features a rotating/pulsing
+  Nexus Core Crystal; `LaneMinion` features an armored chassis with glowing
+  visor and walk bounce.
+- **Procedural Audio Engine**: `SoundSynthesizer` (`core/audio/`) synthesizes
+  crystal-clear 16-bit PCM AudioStreamWAV assets on startup with zero external
+  file dependencies -- laser blasts, weapon swings, punch impacts, explosions,
+  heal chimes, dashes, blinks, coin chimes, UI clicks, victory fanfares, and a
+  looping cyberpunk battle music track. Wired across all combat actions.
 - **Match flow**: `GameRoot` (`scenes/GameRoot.tscn`) is the boot scene
   (`project.godot` `run/main_scene`). It owns Draft -> Match -> Post-match
   -> Play Again: locking a hero spawns the arena with that hero, the enemy
@@ -289,7 +299,7 @@ all pass clean — 61/61 tests, no script errors):
   `DirAccess` fallback for editor/older builds) -- `DirAccess` on `res://`
   only returns `.gd`/`.import` stubs inside an exported PCK, which silently
   emptied the roster and shop in exported builds.
-- GUT suite (**95 tests across 15 scripts**, all green): map symmetry,
+- GUT suite (**95 tests across 15 scripts**, all green, 0 warnings): map symmetry,
   economy, rig importer, hero database, hero scenes, items/inventory, shop,
   draft, hero mechanics, match flow, status effects, projectiles, knockback,
   resources and cast range, ground zones.
@@ -300,11 +310,11 @@ agent):
 - The remaining 22 heroes (roster in `docs/deepseek_prompt.md` §4). The
   pattern is now fully established: 4 ability `.tres` + 1 hero `.tres` +
   1 scene + 1 art PNG; ranged/mage kits need no controller code at all.
-- Audio (music/SFX) — `AudioDirector` + buses exist, nothing generated yet.
-  The `musicgen` MCP server is now wired into `opencode.jsonc` (needs an
-  opencode restart); `freesound` covers recorded SFX.
 - Jungle camps, the neutral boss, towers (only a single lane + 2 bases
   exist in `TestArena`).
+- Baked flipbook animation (`SpriteFrames`) per hero state -- current art is
+  static single-pose sprites and animation is procedural (`HeroAnimator`).
+- Everything in "Phase 2" (networking, ranked/MMR, replays).
 - Baked flipbook animation (`SpriteFrames`) per hero state — current art is
   static single-pose sprites and animation is procedural (`HeroAnimator`).
 - Everything in "Phase 2" (networking, ranked/MMR, replays).

@@ -298,7 +298,22 @@ func cast_ability(ability: AbilityDefinition, target_pos: Variant = null) -> boo
 	_ability_phase = "startup"
 	_ability_frame_timer = ability.startup_frames / float(Engine.physics_ticks_per_second)
 	_set_state(State.CASTING)
+	_play_ability_sfx(ability)
 	return true
+
+func _play_ability_sfx(ability: AbilityDefinition) -> void:
+	if ability.is_heal:
+		AudioDirector.play_heal()
+	elif ability.cast_type == AbilityDefinition.CastType.SKILLSHOT:
+		AudioDirector.play_laser()
+	elif "step" in str(ability.ability_id) or "blink" in str(ability.ability_id):
+		AudioDirector.play_blink()
+	elif "dash" in str(ability.ability_id) or "strafe" in str(ability.ability_id):
+		AudioDirector.play_dash()
+	elif ability.cast_type == AbilityDefinition.CastType.ZONE:
+		AudioDirector.play_explosion()
+	else:
+		AudioDirector.play_slash()
 
 func _process(delta: float) -> void:
 	for ability_id in _cooldowns.keys():
@@ -556,6 +571,7 @@ func _apply_hitstop(frames: int) -> void:
 func take_damage(amount: float, _source: Node = null, knockback: Vector2 = Vector2.ZERO) -> void:
 	if state == State.DEAD or _block_active:
 		return
+	AudioDirector.play_hit()
 	current_hp = max(0.0, current_hp - amount * get_damage_taken_multiplier())
 	if knockback.length_squared() > 0.0:
 		var scaling: float = 1.0

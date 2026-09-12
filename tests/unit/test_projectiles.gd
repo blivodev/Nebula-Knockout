@@ -11,6 +11,14 @@ func _spawn(scene: PackedScene, team: int, position: Vector2) -> CharacterContro
 	add_child_autofree(hero)
 	return hero
 
+func after_each() -> void:
+	var leftovers: Array = []
+	for child in get_children():
+		if child is Projectile:
+			leftovers.append(child)
+	for p in leftovers:
+		p.free()
+
 func _find_projectile(parent: Node) -> Projectile:
 	for child in parent.get_children():
 		if child is Projectile:

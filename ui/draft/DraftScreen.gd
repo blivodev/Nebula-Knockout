@@ -91,6 +91,7 @@ func get_time_left() -> float:
 func select_hero(hero: HeroDefinition) -> void:
 	if hero == null or _locked:
 		return
+	AudioDirector.play_ui()
 	_selected_hero = hero
 	_show_detail(hero)
 	if _lock_button != null:

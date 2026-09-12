@@ -142,11 +142,8 @@ func _refresh() -> void:
 	if _item_list == null:
 		return
 	for child in _item_list.get_children():
-		# Detach immediately, not just queue_free(): a queued child still
-		# counts in get_child_count() until end of frame, which would make
-		# get_visible_item_count() lie right after a category switch.
 		_item_list.remove_child(child)
-		child.queue_free()
+		child.free()
 	for item in ItemDatabase.get_items_by_category(_selected_category):
 		_item_list.add_child(_make_item_row(item))
 	for category in _category_buttons:

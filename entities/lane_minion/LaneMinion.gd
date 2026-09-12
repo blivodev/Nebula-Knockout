@@ -40,7 +40,19 @@ var _knockback_timer: float = 0.0
 func _ready() -> void:
 	add_to_group("minions")
 	current_hp = MAX_HP
-	visual.color = Color(0.35, 0.55, 0.9) if team == MatchState.Team.TEAM_A else Color(0.9, 0.4, 0.35)
+	var col := Color(0.28, 0.62, 1.0) if team == MatchState.Team.TEAM_A else Color(1.0, 0.35, 0.35)
+	if visual != null:
+		visual.polygon = PackedVector2Array([
+			Vector2(-14, -18), Vector2(14, -18), Vector2(18, -2),
+			Vector2(14, 18), Vector2(-14, 18), Vector2(-18, -2)
+		])
+		visual.color = col
+		var visor := Polygon2D.new()
+		visor.polygon = PackedVector2Array([
+			Vector2(-8, -12), Vector2(8, -12), Vector2(8, -5), Vector2(-8, -5)
+		])
+		visor.color = Color(1.0, 0.95, 0.35, 0.95)
+		visual.add_child(visor)
 
 	var own_bit: int = TEAM_A_LAYER_BIT if team == MatchState.Team.TEAM_A else TEAM_B_LAYER_BIT
 	var enemy_bit: int = TEAM_B_LAYER_BIT if team == MatchState.Team.TEAM_A else TEAM_A_LAYER_BIT
@@ -99,6 +111,12 @@ func _follow_path() -> void:
 	var next_point: Vector2 = nav_agent.get_next_path_position()
 	velocity = global_position.direction_to(next_point) * MOVE_SPEED
 	move_and_slide()
+	if visual != null:
+		if velocity.x < -1.0:
+			visual.scale.x = -1.0
+		elif velocity.x > 1.0:
+			visual.scale.x = 1.0
+		visual.position.y = -abs(sin(float(Time.get_ticks_msec()) * 0.014)) * 3.5
 
 func _advance_waypoint() -> void:
 	_waypoint_index += 1

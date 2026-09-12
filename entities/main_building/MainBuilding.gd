@@ -17,6 +17,8 @@ const STRUCTURES_LAYER_BIT: int = 6
 
 var current_hp: float
 var _destroyed: bool = false
+var _crystal: Polygon2D = null
+var _time: float = 0.0
 
 @onready var visual: Polygon2D = $Visual
 @onready var hurtbox: Area2D = $Hurtbox
@@ -24,8 +26,28 @@ var _destroyed: bool = false
 func _ready() -> void:
 	add_to_group("structures")
 	current_hp = max_hp
-	visual.color = TEAM_A_COLOR if team == MatchState.Team.TEAM_A else TEAM_B_COLOR
+	var col: Color = TEAM_A_COLOR if team == MatchState.Team.TEAM_A else TEAM_B_COLOR
+	visual.color = col * 0.45
 	hurtbox.set_collision_layer_value(STRUCTURES_LAYER_BIT, true)
+
+	# Glowing Nexus Core Crystal
+	_crystal = Polygon2D.new()
+	var pts := PackedVector2Array([
+		Vector2(0, -44), Vector2(32, -16), Vector2(32, 16),
+		Vector2(0, 44), Vector2(-32, 16), Vector2(-32, -16)
+	])
+	_crystal.polygon = pts
+	_crystal.color = col * 1.3
+	add_child(_crystal)
+
+func _process(delta: float) -> void:
+	if _destroyed:
+		return
+	_time += delta
+	if _crystal != null:
+		_crystal.rotation = _time * 0.75
+		var s: float = 1.0 + 0.08 * sin(_time * 3.2)
+		_crystal.scale = Vector2(s, s)
 
 func take_damage(amount: float, _source: Node = null, _knockback: Vector2 = Vector2.ZERO) -> void:
 	if _destroyed:
