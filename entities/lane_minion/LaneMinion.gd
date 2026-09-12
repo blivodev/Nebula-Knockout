@@ -20,6 +20,8 @@ const AGGRO_RANGE: float = 200.0
 const TEAM_A_LAYER_BIT: int = 1
 const TEAM_B_LAYER_BIT: int = 2
 const STRUCTURES_LAYER_BIT: int = 6
+const WALL_BLOCKS_A_BIT: int = 7 # occupied by enemy (TEAM_B) BulwarkWalls
+const WALL_BLOCKS_B_BIT: int = 8 # occupied by enemy (TEAM_A) BulwarkWalls
 
 @export var team: MatchState.Team = MatchState.Team.TEAM_A
 @export var waypoints: Array[Vector2] = []
@@ -46,6 +48,11 @@ func _ready() -> void:
 	set_collision_mask_value(TEAM_A_LAYER_BIT, true)
 	set_collision_mask_value(TEAM_B_LAYER_BIT, true)
 	set_collision_mask_value(STRUCTURES_LAYER_BIT, true)
+	# Blocked only by walls owned by the ENEMY team (allied walls are passable).
+	if team == MatchState.Team.TEAM_A:
+		set_collision_mask_value(WALL_BLOCKS_A_BIT, true)
+	else:
+		set_collision_mask_value(WALL_BLOCKS_B_BIT, true)
 
 	aggro_area.set_collision_mask_value(enemy_bit, true)
 	aggro_area.set_collision_mask_value(STRUCTURES_LAYER_BIT, true)

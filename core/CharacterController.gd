@@ -18,8 +18,11 @@ const LAYER_TEAM_A: int = 1
 const LAYER_TEAM_B: int = 2
 const LAYER_HITBOX: int = 4
 const LAYER_STRUCTURES: int = 6
+const LAYER_WALL_BLOCKS_A: int = 7 # occupied by enemy (TEAM_B) BulwarkWalls
+const LAYER_WALL_BLOCKS_B: int = 8 # occupied by enemy (TEAM_A) BulwarkWalls
 
 const ProjectileScene: PackedScene = preload("res://entities/projectile/Projectile.tscn")
+const GroundZoneScene: PackedScene = preload("res://entities/ground_zone/GroundZone.tscn")
 
 @export var hero_definition: HeroDefinition
 @export var team: MatchState.Team = MatchState.Team.TEAM_A
@@ -54,6 +57,9 @@ var _ability_frame_timer: float = 0.0
 var _ability_phase: String = "" # "startup" | "active" | "recovery"
 var _cooldowns: Dictionary = {} # ability_id: StringName -> seconds remaining
 var _statuses: Array[ActiveStatus] = []
+var _aoe_active_calls: int = 0 # physics calls spent in the active window (multi-hit)
+var _aoe_ticks_done: int = 0
+var _aoe_tick_every_calls: int = 0
 
 @onready var hurtbox: Area2D = get_node_or_null("Hurtbox")
 @onready var hitbox: Area2D = get_node_or_null("Hitbox")
@@ -95,6 +101,11 @@ func _configure_combat_layers() -> void:
 	set_collision_mask_value(LAYER_TEAM_A, true)
 	set_collision_mask_value(LAYER_TEAM_B, true)
 	set_collision_mask_value(LAYER_STRUCTURES, true)
+	# Blocked only by walls owned by the ENEMY team (allied walls are passable).
+	if team == MatchState.Team.TEAM_A:
+		set_collision_mask_value(LAYER_WALL_BLOCKS_A, true)
+	else:
+		set_collision_mask_value(LAYER_WALL_BLOCKS_B, true)
 	if hurtbox != null:
 		hurtbox.set_collision_layer_value(own_bit, true)
 	if hitbox != null:
@@ -386,6 +397,10 @@ func _process_ability_frames(delta: float) -> void:
 		return
 	_ability_frame_timer -= delta
 	if _ability_frame_timer > 0.0:
+		# Multi-hit AOE pulses land between phase transitions, spread evenly
+		# across the active window (e.g. Kael's Thousand Cuts).
+		if _ability_phase == "active" and _is_multi_hit_aoe():
+			_process_multi_hit_tick()
 		return
 	match _ability_phase:
 		"startup":
@@ -396,10 +411,30 @@ func _process_ability_frames(delta: float) -> void:
 				# a melee hitbox.
 				_spawn_projectile(_active_ability)
 			elif _active_ability.cast_type == AbilityDefinition.CastType.AOE:
-				_apply_aoe(_active_ability)
-			elif hitbox != null:
+				if _active_ability.multi_hit_ticks > 0:
+					# First of N pulses; the rest land during the active window.
+					_aoe_active_calls = 0
+					_aoe_ticks_done = 0
+					_aoe_tick_every_calls = maxi(1, int(round(
+						_active_ability.active_frames / float(_active_ability.multi_hit_ticks)
+					)))
+					_process_multi_hit_tick()
+				else:
+					_apply_aoe(_active_ability)
+			elif _active_ability.cast_type == AbilityDefinition.CastType.ZONE:
+				_spawn_ground_zone(_active_ability)
+			elif hitbox != null and _active_ability.base_damage > 0.0:
+				# Zero-damage stances (Guard Stance, Unbreakable) never deal
+				# contact damage even though they run the generic timeline.
 				hitbox.monitoring = true
 		"active":
+			if _is_multi_hit_aoe() and _aoe_ticks_done < _active_ability.multi_hit_ticks:
+				# The window closed between pulse intervals -- flush the
+				# remaining pulses so every authored tick always lands.
+				var per_tick: float = _active_ability.base_damage / float(_active_ability.multi_hit_ticks)
+				while _aoe_ticks_done < _active_ability.multi_hit_ticks:
+					_apply_aoe(_active_ability, per_tick)
+					_aoe_ticks_done += 1
 			_ability_phase = "recovery"
 			_ability_frame_timer = _active_ability.recovery_frames / float(Engine.physics_ticks_per_second)
 			if hitbox != null:
@@ -425,11 +460,46 @@ func _spawn_projectile(ability: AbilityDefinition) -> void:
 	projectile.global_position = global_position + facing * 24.0
 	get_parent().add_child(projectile)
 
+## Spawns a persistent GroundZone (cast_type == ZONE) at the caster's
+## position, configured entirely from the ability's data.
+func _spawn_ground_zone(ability: AbilityDefinition) -> void:
+	var zone: GroundZone = GroundZoneScene.instantiate() as GroundZone
+	zone.team = team
+	zone.radius = ability.radius if ability.radius > 0.0 else 120.0
+	zone.damage_per_tick = ability.base_damage * get_damage_dealt_multiplier()
+	zone.status_to_apply = ability.status_effect
+	zone.tick_interval = ability.zone_tick_sec if ability.zone_tick_sec > 0.0 else 0.5
+	zone.lifetime_sec = ability.active_frames / float(Engine.physics_ticks_per_second)
+	zone.source = self
+	zone.global_position = global_position
+	get_parent().add_child(zone)
+
+## True when the active ability is an AOE authored as multi-hit pulses.
+func _is_multi_hit_aoe() -> bool:
+	return (
+		_active_ability != null
+		and _active_ability.cast_type == AbilityDefinition.CastType.AOE
+		and _active_ability.multi_hit_ticks > 0
+	)
+
+## One physics call's worth of multi-hit bookkeeping: when enough calls have
+## accumulated for the next pulse interval, deal base_damage/multi_hit_ticks
+## to everything in radius.
+func _process_multi_hit_tick() -> void:
+	_aoe_active_calls += 1
+	var next_call: int = (_aoe_ticks_done + 1) * _aoe_tick_every_calls
+	if _aoe_active_calls >= next_call and _aoe_ticks_done < _active_ability.multi_hit_ticks:
+		var per_tick: float = _active_ability.base_damage / float(_active_ability.multi_hit_ticks)
+		_apply_aoe(_active_ability, per_tick)
+		_aoe_ticks_done += 1
+
 ## Damages every enemy (hero/minion/structure) within the ability's radius,
-## optionally applying its on-hit status. Used by cast_type == AOE.
-func _apply_aoe(ability: AbilityDefinition) -> void:
+## optionally applying its on-hit status. Used by cast_type == AOE;
+## base_damage_override lets multi-hit pulses deal a fraction of base_damage.
+func _apply_aoe(ability: AbilityDefinition, base_damage_override: float = -1.0) -> void:
 	var radius: float = ability.radius if ability.radius > 0.0 else 120.0
-	var damage: float = ability.base_damage * get_damage_dealt_multiplier()
+	var base: float = base_damage_override if base_damage_override >= 0.0 else ability.base_damage
+	var damage: float = base * get_damage_dealt_multiplier()
 	for group in ["characters", "minions", "structures"]:
 		for node in get_tree().get_nodes_in_group(group):
 			if node == self:

@@ -4,7 +4,7 @@ extends Resource
 ## Framework). Every hero skill/ultimate is one of these .tres resources --
 ## never hardcoded per-hero script logic for numbers/timing.
 
-enum CastType { INSTANT, SKILLSHOT, AOE, CHANNEL, SELF }
+enum CastType { INSTANT, SKILLSHOT, AOE, CHANNEL, SELF, ZONE }
 
 @export var ability_id: StringName
 @export var display_name: String = ""
@@ -43,6 +43,18 @@ enum CastType { INSTANT, SKILLSHOT, AOE, CHANNEL, SELF }
 ## despawning on the first (e.g. Void's beam).
 @export var projectile_pierce: bool = false
 @export var projectile_color: Color = Color(1.0, 0.8, 0.3)
+
+@export_group("Persistent Zone (spawned when cast_type == ZONE)")
+## The GroundZone lives for active_frames (converted to seconds) at the
+## caster's position, dealing base_damage every zone_tick_sec to each enemy
+## inside radius and re-applying status_effect per tick (e.g. Cinder Field).
+@export var zone_tick_sec: float = 0.5
+
+@export_group("Multi-Hit AOE")
+## When > 0 and cast_type == AOE, the hit is split into this many pulses
+## spread evenly across active_frames, each dealing base_damage / multi_hit_ticks
+## (e.g. Kael's Thousand Cuts) -- pure data, no bespoke controller code.
+@export var multi_hit_ticks: int = 0
 
 @export_group("On-Hit Effect")
 ## Optional status applied to each enemy hit, whether from a projectile or an

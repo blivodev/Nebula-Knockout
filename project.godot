@@ -43,6 +43,8 @@ enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg", "res:
 2d_physics/layer_4="hitbox"
 2d_physics/layer_5="hurtbox"
 2d_physics/layer_6="structures"
+2d_physics/layer_7="wall_blocks_team_a"
+2d_physics/layer_8="wall_blocks_team_b"
 
 [physics]
 

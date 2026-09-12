@@ -242,6 +242,22 @@ all pass clean — 61/61 tests, no script errors):
   projectiles (`Projectile._hit`), and radial AOEs (`_apply_aoe`). Both
   `CharacterController` and `LaneMinion` receive knockback velocity and
   friction-decelerate in `_physics_process`.
+- **Persistent GroundZones** (`cast_type == ZONE`): `entities/ground_zone/`
+  spawns a zone at the caster's position that lives for `active_frames`,
+  dealing `base_damage` every `zone_tick_sec` to enemies inside `radius` and
+  re-applying `status_effect` per tick. Pyra's Cinder Field is now a true
+  persistent burn zone, authored purely as data.
+- **Multi-hit AOEs** (`multi_hit_ticks`): AOE abilities authored with
+  `multi_hit_ticks > 0` split their damage into N pulses spread evenly
+  across `active_frames` (Kael's Thousand Cuts: 6 pulses of 43.3). Pure data
+  via the base `CharacterController` -- no bespoke hero code.
+- **Bastion stances live**: Guard Stance (CHANNEL) = 50% damage reduction +
+  25% reflect while active; Unbreakable (SELF) = 80% damage reduction + total
+  knockback immunity. Both run through the generic frame-data timeline with
+  damage math in `BastionController.take_damage`.
+- **BulwarkWall blocks enemies only**: per-team wall layers
+  (`wall_blocks_team_a` layer 7 / `wall_blocks_team_b` layer 8); movers mask
+  only the layer matching their own team, so allied walls are passable.
 - **Resource (Mana/Energy) & Cast Range**: `AbilityDefinition.resource_cost` and
   `cast_range` are enforced in `cast_ability()`. Heroes have configurable
   `base_max_resource` and `base_resource_regen` in `HeroDefinition.gd`. In-match
@@ -259,10 +275,10 @@ all pass clean — 61/61 tests, no script errors):
   (`project.godot` `run/main_scene`). It owns Draft -> Match -> Post-match
   -> Play Again: locking a hero spawns the arena with that hero, the enemy
   team is auto-filled, and base destruction shows a victory/defeat summary.
-- GUT suite (**78 tests across 14 scripts**, all green): map symmetry,
+- GUT suite (**90 tests across 15 scripts**, all green): map symmetry,
   economy, rig importer, hero database, hero scenes, items/inventory, shop,
   draft, hero mechanics, match flow, status effects, projectiles, knockback,
-  resources and cast range.
+  resources and cast range, ground zones.
 
 **Explicitly not built yet** (next work, suited to the `build`/DeepSeek
 agent):
@@ -270,12 +286,8 @@ agent):
 - The remaining 22 heroes (roster in `docs/deepseek_prompt.md` §4). The
   pattern is now fully established: 4 ability `.tres` + 1 hero `.tres` +
   1 scene + 1 art PNG; ranged/mage kits need no controller code at all.
-- Per-hero bits still data-only: Kael's multi-hit Thousand Cuts, Bastion's
-  Guard Stance / Unbreakable, Monk's Chi Combo, the drone's seeking behavior,
-  and Pyra's Cinder Field as a *persistent* ground zone. Each `.tres`
-  description says so.
-- Persistent ground-zone / lingering AOE entities (needed by Cinder Field
-  and several future heroes).
+- Per-hero bits still data-only: Monk's Chi Combo and the Machinist drone's
+  seeking behavior. Each `.tres` description says so.
 - Audio (music/SFX) — `AudioDirector` + buses exist, nothing generated yet.
   The `musicgen` MCP server is now wired into `opencode.jsonc` (needs an
   opencode restart); `freesound` covers recorded SFX.

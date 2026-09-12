@@ -1,16 +1,16 @@
 class_name BulwarkWall
 extends StaticBody2D
 ## Temporary directional wall spawned by Bastion's Bulwark Wall. Blocks
-## movement for its lifetime, then despawns.
+## ENEMY movement only, then despawns.
 ##
-## Simplification: a single StaticBody2D blocks BOTH teams, since one body
-## cannot selectively collide per team. Making it enemy-only would need two
-## bodies or a per-team collision layer scheme -- noted as follow-up in
-## docs/ARCHITECTURE.md.
+## Team-selective blocking works through dedicated per-team wall layers:
+## a wall owned by Team A puts itself on layer 8 (wall_blocks_team_b),
+## a wall owned by Team B on layer 7 (wall_blocks_team_a). Movers (heroes,
+## minions) only mask the wall layer that corresponds to their own team,
+## so allies pass through freely while enemies are blocked.
 
-const STRUCTURES_LAYER_BIT: int = 6
-const TEAM_A_LAYER_BIT: int = 1
-const TEAM_B_LAYER_BIT: int = 2
+const LAYER_WALL_BLOCKS_A: int = 7 # occupied by TEAM_B-owned walls
+const LAYER_WALL_BLOCKS_B: int = 8 # occupied by TEAM_A-owned walls
 
 @export var lifetime_sec: float = 4.0
 @export var team: MatchState.Team = MatchState.Team.TEAM_A
@@ -18,9 +18,12 @@ const TEAM_B_LAYER_BIT: int = 2
 @onready var visual: Polygon2D = $Visual
 
 func _ready() -> void:
-	set_collision_layer_value(STRUCTURES_LAYER_BIT, true)
-	set_collision_mask_value(TEAM_A_LAYER_BIT, true)
-	set_collision_mask_value(TEAM_B_LAYER_BIT, true)
+	# Only the enemy-blocking layer is occupied; the wall's own mask stays
+	# empty because blocking is resolved mover-side (mover.mask vs wall.layer).
+	if team == MatchState.Team.TEAM_A:
+		set_collision_layer_value(LAYER_WALL_BLOCKS_B, true)
+	else:
+		set_collision_layer_value(LAYER_WALL_BLOCKS_A, true)
 	if visual != null:
 		visual.color = Color(0.6, 0.85, 1.0, 0.75)
 	get_tree().create_timer(lifetime_sec).timeout.connect(queue_free)
