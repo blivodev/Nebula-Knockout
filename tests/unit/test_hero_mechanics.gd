@@ -14,6 +14,7 @@ const MonkScene: PackedScene = preload("res://entities/heroes/monk/Monk.tscn")
 const MachinistScene: PackedScene = preload("res://entities/heroes/machinist/Machinist.tscn")
 const VoidScene: PackedScene = preload("res://entities/heroes/void/Void.tscn")
 const FlintScene: PackedScene = preload("res://entities/heroes/flint/Flint.tscn")
+const VexScene: PackedScene = preload("res://entities/heroes/vex/Vex.tscn")
 
 func _spawn(scene: PackedScene, team: int, position: Vector2) -> CharacterController:
 	var hero: CharacterController = scene.instantiate() as CharacterController
@@ -41,6 +42,9 @@ func test_each_starter_hero_uses_its_specialized_controller() -> void:
 	var f: Node = FlintScene.instantiate()
 	assert_true(f is CharacterController, "Flint should use CharacterController")
 	f.free()
+	var vex: Node = VexScene.instantiate()
+	assert_true(vex is VexController, "Vex should use VexController")
+	vex.free()
 
 # --- Kael: Riposte ---------------------------------------------------------
 
@@ -173,3 +177,24 @@ func test_flint_quick_shot_fires_projectile() -> void:
 		if child is Projectile:
 			proj = child
 	assert_not_null(proj, "Flint's Quick Shot should spawn a Projectile")
+
+# --- Vex: Shadow Dash & Reaper's Mark --------------------------------------
+
+func test_vex_shadow_dash_moves_forward() -> void:
+	var vex: VexController = _spawn(VexScene, MatchState.Team.TEAM_A, Vector2.ZERO) as VexController
+	vex.facing = Vector2.RIGHT
+	vex.cast_ability(vex.hero_definition.skill_2) # Shadow Dash
+	vex._process_ability_frames(1.0) # active phase
+	assert_gt(vex.velocity.x, 0.0, "Shadow Dash should set forward dash velocity")
+
+func test_vex_reapers_mark_fires_projectile() -> void:
+	var vex: VexController = _spawn(VexScene, MatchState.Team.TEAM_A, Vector2.ZERO) as VexController
+	vex.facing = Vector2.RIGHT
+	vex.cast_ability(vex.hero_definition.skill_3) # Reaper's Mark
+	vex._process_ability_frames(1.0)
+
+	var proj: Projectile = null
+	for child in vex.get_parent().get_children():
+		if child is Projectile:
+			proj = child
+	assert_not_null(proj, "Reaper's Mark should spawn a Projectile")

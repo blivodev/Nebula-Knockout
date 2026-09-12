@@ -17,6 +17,8 @@ enum RoleTag { ENGAGE, PEEL, POKE, SPLIT_PUSH, OBJECTIVE }
 
 @export_group("Base Stats")
 @export var base_max_hp: float = 600.0
+@export var base_max_resource: float = 100.0
+@export var base_resource_regen: float = 5.0
 @export var base_move_speed: float = 300.0
 @export var base_dash_speed: float = 900.0
 @export var base_armor: float = 0.0

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"vex_soul_reap"
+display_name = "Soul Reap"
+description = "Vex's ultimate: leaps into the air and crashes down with her scythe, delivering an execution strike to all surrounding foes. AOE -> applied by CharacterController."
+cooldown_sec = 70.0
+resource_cost = 100.0
+cast_type = 2
+cast_range = 0.0
+radius = 180.0
+startup_frames = 8
+active_frames = 4
+recovery_frames = 14
+hitstop_frames = 8
+is_heal = false
+base_damage = 220.0
+knockback_vector = Vector2(280, 0)
+knockback_scaling = 0.2

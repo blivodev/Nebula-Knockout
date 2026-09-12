@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/vex_scythe_sweep.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/vex_shadow_dash.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/vex_reapers_mark.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/vex_soul_reap.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/vex.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"vex"
+display_name = "Vex"
+hero_class = 0
+attack_type = 0
+role_tag = 0
+base_max_hp = 550.0
+base_max_resource = 100.0
+base_resource_regen = 5.0
+base_move_speed = 330.0
+base_dash_speed = 950.0
+base_armor = 0.0
+base_attack_damage = 58.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs exceptionally well with poke mages and tanks who soften enemies down to execute thresholds."
+lore_hook = "A grim reaper of the neon slums, Vex harvests souls where the city lights refuse to reach."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/vex/Vex.tscn"

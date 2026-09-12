@@ -233,11 +233,23 @@ all pass clean — 61/61 tests, no script errors):
   Bullet Storm (ultimate AOE). Pure data using the base `CharacterController`,
   following Pyra's no-code precedent. Art generated via ComfyUI Z-Image Turbo
   + BiRefNet cutout.
+- **Vex** (8th hero, Damage/Melee scythe assassin): Scythe Sweep (INSTANT
+  melee cleave), Shadow Dash (bespoke dash in `VexController`), Reaper's Mark
+  (SKILLSHOT slow), Soul Reap (ultimate execution AOE). Art generated via
+  ComfyUI Z-Image Turbo + BiRefNet cutout.
 - **Knockback system**: `knockback_vector` and Smash-style `knockback_scaling`
   are now fully active and applied across melee attacks (`_apply_hit_to`),
   projectiles (`Projectile._hit`), and radial AOEs (`_apply_aoe`). Both
   `CharacterController` and `LaneMinion` receive knockback velocity and
   friction-decelerate in `_physics_process`.
+- **Resource (Mana/Energy) & Cast Range**: `AbilityDefinition.resource_cost` and
+  `cast_range` are enforced in `cast_ability()`. Heroes have configurable
+  `base_max_resource` and `base_resource_regen` in `HeroDefinition.gd`. In-match
+  `HUD` displays a dedicated resource bar and surfaces `NO MANA` alerts.
+- **Opponent Hero Bot**: `TestArena` spawns the drafted enemy hero on Team B
+  (`spawn_enemy_hero`), driven by `_handle_bot_ai()` on `CharacterController`
+  (`is_bot = true`). Bots acquire nearest targets, advance lanes, retreat at
+  critical health, and cast abilities in range.
 - **Animation**: `HeroAnimator` (`core/`) is added automatically to every
   hero's `Visual` node and gives procedural idle bob / walk sway / cast pop /
   hit flash / dash stretch / death squash, driven by the state machine. This
@@ -247,14 +259,15 @@ all pass clean — 61/61 tests, no script errors):
   (`project.godot` `run/main_scene`). It owns Draft -> Match -> Post-match
   -> Play Again: locking a hero spawns the arena with that hero, the enemy
   team is auto-filled, and base destruction shows a victory/defeat summary.
-- GUT suite (**69 tests across 13 scripts**, all green): map symmetry,
+- GUT suite (**78 tests across 14 scripts**, all green): map symmetry,
   economy, rig importer, hero database, hero scenes, items/inventory, shop,
-  draft, hero mechanics, match flow, status effects, projectiles, knockback.
+  draft, hero mechanics, match flow, status effects, projectiles, knockback,
+  resources and cast range.
 
 **Explicitly not built yet** (next work, suited to the `build`/DeepSeek
 agent):
 
-- The remaining 23 heroes (roster in `docs/deepseek_prompt.md` §4). The
+- The remaining 22 heroes (roster in `docs/deepseek_prompt.md` §4). The
   pattern is now fully established: 4 ability `.tres` + 1 hero `.tres` +
   1 scene + 1 art PNG; ranged/mage kits need no controller code at all.
 - Per-hero bits still data-only: Kael's multi-hit Thousand Cuts, Bastion's

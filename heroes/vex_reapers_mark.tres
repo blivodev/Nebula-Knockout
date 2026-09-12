@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://statuses/slow.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"vex_reapers_mark"
+display_name = "Reaper's Mark"
+description = "Hurls a spectral scythe blade that damages and slows the first target struck. SKILLSHOT -> fired as a projectile by CharacterController."
+cooldown_sec = 8.0
+resource_cost = 0.0
+cast_type = 1
+cast_range = 550.0
+radius = 0.0
+startup_frames = 6
+active_frames = 2
+recovery_frames = 8
+hitstop_frames = 3
+is_heal = false
+base_damage = 50.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+projectile_speed = 850.0
+projectile_max_range = 550.0
+projectile_pierce = false
+projectile_color = Color(0.2, 0.9, 0.8, 1)
+status_effect = ExtResource("2")

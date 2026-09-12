@@ -28,6 +28,8 @@ const ProjectileScene: PackedScene = preload("res://entities/projectile/Projecti
 ## skills). Direct key polling is deliberate for the prototype; converting to
 ## named InputMap actions (for remapping/controller support) is a follow-up.
 @export var is_player_controlled: bool = false
+## When true and not player controlled, executes lane bot AI.
+@export var is_bot: bool = false
 ## Adds a procedural HeroAnimator to the "Visual" child (idle bob, walk sway,
 ## cast pop, hit flash, dash stretch). Set false in tests that assert on the
 ## Visual transform directly.
@@ -39,8 +41,11 @@ var state: State = State.IDLE
 var facing: Vector2 = Vector2.RIGHT
 var current_hp: float = 0.0
 var max_hp: float = 0.0
+var current_resource: float = 0.0
+var max_resource: float = 0.0
 var move_speed: float = 0.0
 var dash_speed: float = 0.0
+var _bot_think_timer: float = 0.0
 
 var _hitstun_timer: float = 0.0
 var _block_active: bool = false
@@ -57,9 +62,11 @@ func _ready() -> void:
 	add_to_group("characters")
 	if hero_definition != null:
 		max_hp = hero_definition.base_max_hp
+		max_resource = hero_definition.base_max_resource
 		move_speed = hero_definition.base_move_speed
 		dash_speed = hero_definition.base_dash_speed
 	current_hp = max_hp
+	current_resource = max_resource
 	_configure_combat_layers()
 	_setup_animator()
 	if hitbox != null:
@@ -109,6 +116,10 @@ func _physics_process(delta: float) -> void:
 		_:
 			if is_player_controlled:
 				_handle_player_movement()
+			elif is_bot and state != State.DEAD:
+				_handle_bot_ai(delta)
+	if state != State.DEAD and current_resource < max_resource and hero_definition != null:
+		gain_resource(hero_definition.base_resource_regen * delta)
 	move_and_slide()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -162,25 +173,121 @@ func _handle_player_movement() -> void:
 		velocity = Vector2.ZERO
 		_set_state(State.IDLE)
 
+func _handle_bot_ai(delta: float) -> void:
+	_bot_think_timer -= delta
+	var nearest_enemy: Node2D = null
+	var min_dist: float = 999999.0
+	for group in ["characters", "minions", "structures"]:
+		for node in get_tree().get_nodes_in_group(group):
+			if node == self or not is_instance_valid(node):
+				continue
+			var t: Variant = node.get("team")
+			if t == null or int(t) == int(team):
+				continue
+			if node.has_method("is_alive") and not node.call("is_alive"):
+				continue
+			if node.has_method("is_destroyed") and node.call("is_destroyed"):
+				continue
+			var hp: Variant = node.get("current_hp")
+			if hp != null and float(hp) <= 0.0:
+				continue
+			var d: float = global_position.distance_to(node.global_position)
+			if d < min_dist:
+				min_dist = d
+				nearest_enemy = node
+
+	if nearest_enemy != null:
+		var dir: Vector2 = global_position.direction_to(nearest_enemy.global_position)
+		if dir.length_squared() > 0.01:
+			facing = dir.normalized()
+		var attack_range: float = 120.0
+		if hero_definition != null and hero_definition.skill_1 != null and hero_definition.skill_1.cast_range > 0.0:
+			attack_range = minf(hero_definition.skill_1.cast_range, 350.0)
+
+		# If low HP (< 25%), retreat away from enemy toward friendly base
+		if current_hp < max_hp * 0.25:
+			var retreat_dir: Vector2 = Vector2.LEFT if team == MatchState.Team.TEAM_A else Vector2.RIGHT
+			velocity = retreat_dir * move_speed * get_move_speed_multiplier()
+			_set_state(State.WALK)
+		elif min_dist > attack_range:
+			velocity = facing * move_speed * get_move_speed_multiplier()
+			_set_state(State.WALK)
+		else:
+			velocity = Vector2.ZERO
+			_set_state(State.IDLE)
+
+		# Cast abilities if ready
+		if _bot_think_timer <= 0.0 and state == State.IDLE and hero_definition != null:
+			_bot_think_timer = 0.5
+			var abilities: Array[AbilityDefinition] = [
+				hero_definition.ultimate,
+				hero_definition.skill_1,
+				hero_definition.skill_2,
+				hero_definition.skill_3,
+			]
+			for ability in abilities:
+				if ability != null and can_cast_ability(ability, nearest_enemy.global_position):
+					cast_ability(ability, nearest_enemy.global_position)
+					break
+	else:
+		var lane_dir: Vector2 = Vector2.RIGHT if team == MatchState.Team.TEAM_A else Vector2.LEFT
+		facing = lane_dir
+		velocity = lane_dir * move_speed * get_move_speed_multiplier()
+		_set_state(State.WALK)
+
 func _set_state(new_state: State) -> void:
 	if state == new_state:
 		return
 	state = new_state
 	state_changed.emit(new_state)
 
+func has_resource(amount: float) -> bool:
+	return current_resource >= amount
+
+func spend_resource(amount: float) -> bool:
+	if amount <= 0.0:
+		return true
+	if current_resource < amount:
+		return false
+	current_resource = maxf(0.0, current_resource - amount)
+	return true
+
+func gain_resource(amount: float) -> void:
+	if state == State.DEAD or amount <= 0.0:
+		return
+	current_resource = minf(max_resource, current_resource + amount)
+
+func is_in_cast_range(ability: AbilityDefinition, target_pos: Vector2) -> bool:
+	if ability == null or ability.cast_range <= 0.0:
+		return true
+	return global_position.distance_to(target_pos) <= ability.cast_range
+
+func can_cast_ability(ability: AbilityDefinition, target_pos: Variant = null) -> bool:
+	if ability == null or state == State.DEAD or state == State.CASTING:
+		return false
+	if is_on_cooldown(ability):
+		return false
+	if ability.resource_cost > 0.0 and not has_resource(ability.resource_cost):
+		return false
+	if target_pos is Vector2 and not is_in_cast_range(ability, target_pos):
+		return false
+	return true
+
 ## Entry point for playing an ability; drives the frame-data timeline
 ## (startup -> active -> recovery) and toggles the hitbox on/off exactly
-## during the active window.
-func cast_ability(ability: AbilityDefinition) -> void:
-	if ability == null or state == State.DEAD or state == State.CASTING:
-		return
-	if is_on_cooldown(ability):
-		return
+## during the active window. Validates resource cost and cast range.
+func cast_ability(ability: AbilityDefinition, target_pos: Variant = null) -> bool:
+	if not can_cast_ability(ability, target_pos):
+		return false
+	if target_pos is Vector2 and global_position.distance_squared_to(target_pos) > 0.01:
+		facing = global_position.direction_to(target_pos).normalized()
+	spend_resource(ability.resource_cost)
 	_cooldowns[ability.ability_id] = ability.cooldown_sec
 	_active_ability = ability
 	_ability_phase = "startup"
 	_ability_frame_timer = ability.startup_frames / float(Engine.physics_ticks_per_second)
 	_set_state(State.CASTING)
+	return true
 
 func _process(delta: float) -> void:
 	for ability_id in _cooldowns.keys():

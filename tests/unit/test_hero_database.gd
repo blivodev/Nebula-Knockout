@@ -10,11 +10,12 @@ const EXPECTED_HERO_IDS: Array[StringName] = [
 	&"pyra",
 	&"void",
 	&"flint",
+	&"vex",
 ]
 
 func test_hero_database_loads_all_authored_heroes() -> void:
 	HeroDatabase.reload()
-	assert_eq(HeroDatabase.count(), 7, "Kael, Bastion, Monk, Machinist, Pyra, Void, Flint should all load")
+	assert_eq(HeroDatabase.count(), 8, "Kael, Bastion, Monk, Machinist, Pyra, Void, Flint, Vex should all load")
 
 func test_each_expected_hero_is_present() -> void:
 	HeroDatabase.reload()

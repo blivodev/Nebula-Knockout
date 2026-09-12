@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"vex_scythe_sweep"
+display_name = "Scythe Sweep"
+description = "Vex swings her ethereal scythe in a wide frontal arc, cleaving through all foes in reach. INSTANT -> applied via melee hitbox."
+cooldown_sec = 3.5
+resource_cost = 0.0
+cast_type = 0
+cast_range = 140.0
+radius = 0.0
+startup_frames = 4
+active_frames = 2
+recovery_frames = 6
+hitstop_frames = 3
+is_heal = false
+base_damage = 65.0
+knockback_vector = Vector2(160, 0)
+knockback_scaling = 0.1

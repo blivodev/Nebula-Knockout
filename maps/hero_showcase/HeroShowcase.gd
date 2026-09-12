@@ -13,6 +13,7 @@ const HERO_SCENES: Array[PackedScene] = [
 	preload("res://entities/heroes/pyra/Pyra.tscn"),
 	preload("res://entities/heroes/void/Void.tscn"),
 	preload("res://entities/heroes/flint/Flint.tscn"),
+	preload("res://entities/heroes/vex/Vex.tscn"),
 ]
 const SPACING: float = 240.0
 

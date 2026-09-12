@@ -23,6 +23,10 @@ const ItemShopScene: PackedScene = preload("res://ui/shop/ItemShop.tscn")
 ## Which hero the local player controls. The match flow sets this from the
 ## draft result; it defaults to Kael for standalone arena runs.
 @export var player_hero_id: StringName = &"kael"
+## Set false in tests / headless loop checks that don't want an enemy hero.
+@export var spawn_enemy_hero: bool = true
+## Which hero the enemy bot controls. If empty, reads from MatchState.team_b_picks.
+@export var enemy_hero_id: StringName = &""
 
 @onready var nav_region: NavigationRegion2D = $NavigationRegion2D
 @onready var minions_root: Node2D = $Minions
@@ -32,6 +36,7 @@ var _wave_timer: float = 0.0
 var _base_a: MainBuilding
 var _base_b: MainBuilding
 var _player_hero: CharacterController
+var _enemy_hero: CharacterController
 var _hud: HUD
 var _shop: ItemShop
 
@@ -43,6 +48,8 @@ func _ready() -> void:
 	if spawn_player_hero:
 		_spawn_player_hero()
 		_setup_ui()
+	if spawn_enemy_hero:
+		_spawn_enemy_hero()
 	MatchState.set_phase(MatchState.Phase.IN_PROGRESS)
 	# First wave immediately so the loop is visible without waiting.
 	_spawn_wave()
@@ -80,6 +87,29 @@ func _spawn_player_hero() -> void:
 	_player_hero.is_player_controlled = true
 	_player_hero.position = _base_a.position + Vector2(140.0, 0.0)
 	add_child(_player_hero)
+
+func _spawn_enemy_hero() -> void:
+	var hid: StringName = enemy_hero_id
+	if hid == &"" and not MatchState.team_b_picks.is_empty():
+		hid = MatchState.team_b_picks[0]
+	if hid == &"":
+		hid = &"bastion"
+	var hero_def: HeroDefinition = HeroDatabase.get_hero(hid)
+	if hero_def == null or hero_def.scene_path == "":
+		push_warning("TestArena: no playable scene for enemy hero '%s'; skipping spawn" % hid)
+		return
+	var scene: PackedScene = load(hero_def.scene_path)
+	if scene == null:
+		push_warning("TestArena: failed to load enemy hero scene %s" % hero_def.scene_path)
+		return
+	_enemy_hero = scene.instantiate() as CharacterController
+	_enemy_hero.team = MatchState.Team.TEAM_B
+	_enemy_hero.player_id = 1
+	_enemy_hero.is_player_controlled = false
+	_enemy_hero.is_bot = true
+	_enemy_hero.facing = Vector2.LEFT
+	_enemy_hero.position = _base_b.position - Vector2(140.0, 0.0)
+	add_child(_enemy_hero)
 
 func _build_navigation() -> void:
 	var nav_poly := NavigationPolygon.new()

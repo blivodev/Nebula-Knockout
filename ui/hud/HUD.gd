@@ -11,6 +11,8 @@ const SKILL_KEYS: Array[String] = ["Q", "E", "R", "F"]
 var _hero: CharacterController = null
 var _hp_bar: ProgressBar
 var _hp_label: Label
+var _resource_bar: ProgressBar
+var _resource_label: Label
 var _gold_label: Label
 var _skill_box: HBoxContainer
 var _skill_labels: Array[Label] = []
@@ -46,6 +48,11 @@ func _refresh() -> void:
 		_hp_bar.value = _hero.current_hp
 	if _hp_label != null:
 		_hp_label.text = "%d / %d" % [int(_hero.current_hp), int(_hero.max_hp)]
+	if _resource_bar != null:
+		_resource_bar.max_value = maxf(1.0, _hero.max_resource)
+		_resource_bar.value = _hero.current_resource
+	if _resource_label != null:
+		_resource_label.text = "%d / %d" % [int(_hero.current_resource), int(_hero.max_resource)]
 	var abilities: Array = _hero_abilities()
 	for i in range(min(abilities.size(), _skill_labels.size())):
 		var ability: AbilityDefinition = abilities[i]
@@ -57,6 +64,9 @@ func _refresh() -> void:
 		if remaining > 0.0:
 			label.text = "[%s] %s  %.1fs" % [SKILL_KEYS[i], ability.display_name, remaining]
 			label.modulate = Color(0.6, 0.6, 0.6)
+		elif ability.resource_cost > 0.0 and not _hero.has_resource(ability.resource_cost):
+			label.text = "[%s] %s  NO MANA" % [SKILL_KEYS[i], ability.display_name]
+			label.modulate = Color(0.4, 0.6, 0.9)
 		else:
 			label.text = "[%s] %s  READY" % [SKILL_KEYS[i], ability.display_name]
 			label.modulate = Color(1, 1, 1)
@@ -103,6 +113,18 @@ func _build_ui() -> void:
 	_hp_bar.custom_minimum_size = Vector2(360, 22)
 	_hp_bar.show_percentage = false
 	hp_box.add_child(_hp_bar)
+
+	_resource_label = Label.new()
+	_resource_label.add_theme_font_size_override("font_size", 14)
+	_resource_label.add_theme_color_override("font_color", Color(0.4, 0.8, 1.0))
+	hp_box.add_child(_resource_label)
+	_resource_bar = ProgressBar.new()
+	_resource_bar.custom_minimum_size = Vector2(360, 14)
+	_resource_bar.show_percentage = false
+	var res_style := StyleBoxFlat.new()
+	res_style.bg_color = Color(0.18, 0.55, 0.95)
+	_resource_bar.add_theme_stylebox_override("fill", res_style)
+	hp_box.add_child(_resource_bar)
 
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -67,6 +67,8 @@ func _enter_match() -> void:
 	_clear_current()
 	var arena: Node = TestArenaScene.instantiate()
 	arena.player_hero_id = _player_hero_id
+	if not MatchState.team_b_picks.is_empty():
+		arena.enemy_hero_id = MatchState.team_b_picks[0]
 	add_child(arena)
 	_current = arena
 

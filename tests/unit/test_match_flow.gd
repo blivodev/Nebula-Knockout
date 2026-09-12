@@ -37,6 +37,8 @@ func test_locking_a_hero_transitions_to_the_match_with_that_hero() -> void:
 	var arena: Node = root.get_current()
 	assert_true(arena is Node2D, "the match phase should show the arena")
 	assert_eq(arena.get("player_hero_id"), &"bastion", "the drafted hero should reach the arena")
+	assert_eq(arena.get("enemy_hero_id"), MatchState.team_b_picks[0], "the enemy hero pick should reach the arena")
+	assert_not_null(arena.get("_enemy_hero"), "the enemy hero should be spawned in the arena")
 
 func test_match_end_transitions_to_post_match() -> void:
 	var root: GameRoot = _make_root()
