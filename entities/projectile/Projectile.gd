@@ -14,6 +14,8 @@ extends Area2D
 @export var max_range: float = 600.0
 @export var pierce: bool = false
 @export var color: Color = Color(1.0, 0.8, 0.3)
+@export var knockback_vector: Vector2 = Vector2.ZERO
+@export var knockback_scaling: float = 0.0
 @export var status_to_apply: StatusEffectDefinition
 @export var caster: Node = null
 
@@ -64,7 +66,9 @@ func _hit(target: Node) -> void:
 	if not target.has_method("take_damage"):
 		return
 	var source: Node = caster if (caster != null and is_instance_valid(caster)) else null
-	target.call("take_damage", damage, source)
+	var kb_dir: Vector2 = direction.normalized() if direction.length_squared() > 0.01 else Vector2.RIGHT
+	var kb: Vector2 = kb_dir * knockback_vector.x
+	target.call("take_damage", damage, source, kb)
 	if status_to_apply != null and target.has_method("apply_status"):
 		target.call("apply_status", status_to_apply, source)
 	if not pierce:

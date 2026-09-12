@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"flint_trick_shot"
+display_name = "Trick Shot"
+description = "Fires an armor-piercing heavy caliber bullet that passes through all enemies. SKILLSHOT -> fired as a piercing projectile by the base CharacterController."
+cooldown_sec = 8.0
+resource_cost = 0.0
+cast_type = 1
+cast_range = 640.0
+radius = 0.0
+startup_frames = 6
+active_frames = 2
+recovery_frames = 8
+hitstop_frames = 3
+is_heal = false
+base_damage = 85.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+projectile_speed = 850.0
+projectile_max_range = 640.0
+projectile_pierce = true
+projectile_color = Color(1, 0.55, 0.1, 1)

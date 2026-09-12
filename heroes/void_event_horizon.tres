@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"void_event_horizon"
+display_name = "Event Horizon"
+description = "Void's ultimate: collapses local spacetime, devastating all enemies caught in the gravitational collapse. AOE -> applied by CharacterController."
+cooldown_sec = 85.0
+resource_cost = 100.0
+cast_type = 2
+cast_range = 0.0
+radius = 300.0
+startup_frames = 14
+active_frames = 6
+recovery_frames = 20
+hitstop_frames = 8
+is_heal = false
+base_damage = 240.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0

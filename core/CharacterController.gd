@@ -99,6 +99,7 @@ func _physics_process(delta: float) -> void:
 	match state:
 		State.HIT:
 			_hitstun_timer -= delta
+			velocity = velocity.move_toward(Vector2.ZERO, 1200.0 * delta)
 			if _hitstun_timer <= 0.0:
 				_set_state(State.IDLE)
 		State.CASTING:
@@ -310,6 +311,8 @@ func _spawn_projectile(ability: AbilityDefinition) -> void:
 	projectile.max_range = ability.projectile_max_range
 	projectile.pierce = ability.projectile_pierce
 	projectile.color = ability.projectile_color
+	projectile.knockback_vector = ability.knockback_vector
+	projectile.knockback_scaling = ability.knockback_scaling
 	projectile.status_to_apply = ability.status_effect
 	projectile.caster = self
 	projectile.global_position = global_position + facing * 24.0
@@ -334,7 +337,9 @@ func _apply_aoe(ability: AbilityDefinition) -> void:
 				continue
 			if not node.has_method("take_damage"):
 				continue
-			node.call("take_damage", damage, self)
+			var kb_dir: Vector2 = (node_position - global_position).normalized() if global_position.distance_squared_to(node_position) > 0.01 else facing.normalized()
+			var kb: Vector2 = kb_dir * ability.knockback_vector.x
+			node.call("take_damage", damage, self, kb)
 			if ability.status_effect != null and node.has_method("apply_status"):
 				node.call("apply_status", ability.status_effect, self)
 
@@ -353,8 +358,10 @@ func _apply_hit_to(target: Node) -> void:
 		return
 	if target.has_method("take_damage"):
 		var damage: float = _active_ability.base_damage * get_damage_dealt_multiplier()
+		var kb_dir: Vector2 = facing.normalized() if facing.length_squared() > 0.01 else Vector2.RIGHT
+		var kb: Vector2 = kb_dir * _active_ability.knockback_vector.x
 		_apply_hitstop(_active_ability.hitstop_frames)
-		target.call("take_damage", damage, self)
+		target.call("take_damage", damage, self, kb)
 		hit_landed.emit(target, damage)
 
 ## Global hit-stop: briefly slows Engine.time_scale on a big hit for
@@ -369,10 +376,17 @@ func _apply_hitstop(frames: int) -> void:
 		func() -> void: Engine.time_scale = 1.0
 	)
 
-func take_damage(amount: float, _source: Node = null) -> void:
+func take_damage(amount: float, _source: Node = null, knockback: Vector2 = Vector2.ZERO) -> void:
 	if state == State.DEAD or _block_active:
 		return
 	current_hp = max(0.0, current_hp - amount * get_damage_taken_multiplier())
+	if knockback.length_squared() > 0.0:
+		var scaling: float = 1.0
+		if _source is CharacterController and (_source as CharacterController)._active_ability != null:
+			var kb_scale: float = (_source as CharacterController)._active_ability.knockback_scaling
+			if kb_scale > 0.0:
+				scaling += kb_scale * (1.0 - (current_hp / maxf(1.0, max_hp)))
+		velocity = knockback * scaling
 	if current_hp <= 0.0:
 		_die()
 	else:

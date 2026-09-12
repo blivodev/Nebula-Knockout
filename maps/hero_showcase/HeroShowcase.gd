@@ -1,5 +1,5 @@
 extends Node2D
-## Visual proof that the first four heroes' MCP-generated art is imported
+## Visual proof that the heroes' MCP-generated art is imported
 ## and renderable in-engine. Spawns one instance of each hero scene in a
 ## row. Run it with:
 ##   godot --path "D:\Projects\Nebula Knockout" res://maps/hero_showcase/HeroShowcase.tscn
@@ -11,6 +11,8 @@ const HERO_SCENES: Array[PackedScene] = [
 	preload("res://entities/heroes/monk/Monk.tscn"),
 	preload("res://entities/heroes/machinist/Machinist.tscn"),
 	preload("res://entities/heroes/pyra/Pyra.tscn"),
+	preload("res://entities/heroes/void/Void.tscn"),
+	preload("res://entities/heroes/flint/Flint.tscn"),
 ]
 const SPACING: float = 240.0
 

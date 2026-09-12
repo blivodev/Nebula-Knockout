@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"flint_quick_shot"
+display_name = "Quick Shot"
+description = "Fires a rapid bullet in the facing direction. SKILLSHOT -> fired as a fast projectile by the base CharacterController."
+cooldown_sec = 3.0
+resource_cost = 0.0
+cast_type = 1
+cast_range = 600.0
+radius = 0.0
+startup_frames = 4
+active_frames = 2
+recovery_frames = 6
+hitstop_frames = 2
+is_heal = false
+base_damage = 60.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+projectile_speed = 900.0
+projectile_max_range = 600.0
+projectile_pierce = false
+projectile_color = Color(1, 0.85, 0.25, 1)

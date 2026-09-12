@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://statuses/slow.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"void_abyssal_rift"
+display_name = "Abyssal Rift"
+description = "Opens a dark tear in space that damages and slows nearby enemies. AOE -> applied by CharacterController."
+cooldown_sec = 11.0
+resource_cost = 0.0
+cast_type = 2
+cast_range = 0.0
+radius = 190.0
+startup_frames = 8
+active_frames = 3
+recovery_frames = 12
+hitstop_frames = 3
+is_heal = false
+base_damage = 65.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+status_effect = ExtResource("2")

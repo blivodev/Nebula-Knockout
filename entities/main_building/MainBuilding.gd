@@ -27,7 +27,7 @@ func _ready() -> void:
 	visual.color = TEAM_A_COLOR if team == MatchState.Team.TEAM_A else TEAM_B_COLOR
 	hurtbox.set_collision_layer_value(STRUCTURES_LAYER_BIT, true)
 
-func take_damage(amount: float, _source: Node = null) -> void:
+func take_damage(amount: float, _source: Node = null, _knockback: Vector2 = Vector2.ZERO) -> void:
 	if _destroyed:
 		return
 	current_hp = max(0.0, current_hp - amount)

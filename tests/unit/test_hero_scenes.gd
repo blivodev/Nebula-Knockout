@@ -9,6 +9,8 @@ const HERO_SCENES: Dictionary = {
 	&"monk": "res://entities/heroes/monk/Monk.tscn",
 	&"machinist": "res://entities/heroes/machinist/Machinist.tscn",
 	&"pyra": "res://entities/heroes/pyra/Pyra.tscn",
+	&"void": "res://entities/heroes/void/Void.tscn",
+	&"flint": "res://entities/heroes/flint/Flint.tscn",
 }
 
 func test_every_hero_scene_loads_with_art_and_combat_nodes() -> void:

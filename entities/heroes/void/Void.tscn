@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://entities/heroes/void/VoidController.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/void.tres" id="2"]
+[ext_resource type="Texture2D" path="res://art/heroes/void.png" id="3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 20.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
+radius = 22.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hitbox"]
+size = Vector2(60, 50)
+
+[node name="Void" type="CharacterBody2D"]
+script = ExtResource("1")
+hero_definition = ExtResource("2")
+
+[node name="Visual" type="Sprite2D" parent="."]
+position = Vector2(0, -70)
+scale = Vector2(0.13, 0.13)
+texture = ExtResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_hurtbox")
+
+[node name="Hitbox" type="Area2D" parent="."]
+position = Vector2(55, 0)
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_hitbox")

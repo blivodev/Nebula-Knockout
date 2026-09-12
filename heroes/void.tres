@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/void_void_beam.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/void_nether_step.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/void_abyssal_rift.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/void_event_horizon.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/void.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"void"
+display_name = "Void"
+hero_class = 0
+attack_type = 2
+role_tag = 2
+base_max_hp = 560.0
+base_move_speed = 305.0
+base_dash_speed = 880.0
+base_armor = 0.0
+base_attack_damage = 52.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs well with Tanks who group enemies up so his piercing beam and singularity hit multiple targets simultaneously."
+lore_hook = "An astronomer who looked into the tear between stars and found the dark looking back, Void channels the cold gravity of empty space."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/void/Void.tscn"

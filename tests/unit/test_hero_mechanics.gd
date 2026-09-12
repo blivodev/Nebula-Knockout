@@ -1,15 +1,19 @@
 extends GutTest
-## Covers the four starter heroes' implemented unique mechanics:
-##   Kael  - Riposte parry/counter
-##   Bastion - Bulwark Wall spawn
-##   Monk  - Flowing Palm heal + Harmonic Convergence AOE heal
+## Covers the heroes' implemented unique mechanics:
+##   Kael      - Riposte parry/counter
+##   Bastion   - Bulwark Wall spawn
+##   Monk      - Flowing Palm heal + Harmonic Convergence AOE heal
 ##   Machinist - Scout Drone deploy + Detonate
+##   Void      - Nether Step teleport blink
+##   Flint     - Quick Shot projectile
 ## See docs/ARCHITECTURE.md Section 5 for what remains data-only per hero.
 
 const KaelScene: PackedScene = preload("res://entities/heroes/kael/Kael.tscn")
 const BastionScene: PackedScene = preload("res://entities/heroes/bastion/Bastion.tscn")
 const MonkScene: PackedScene = preload("res://entities/heroes/monk/Monk.tscn")
 const MachinistScene: PackedScene = preload("res://entities/heroes/machinist/Machinist.tscn")
+const VoidScene: PackedScene = preload("res://entities/heroes/void/Void.tscn")
+const FlintScene: PackedScene = preload("res://entities/heroes/flint/Flint.tscn")
 
 func _spawn(scene: PackedScene, team: int, position: Vector2) -> CharacterController:
 	var hero: CharacterController = scene.instantiate() as CharacterController
@@ -31,6 +35,12 @@ func test_each_starter_hero_uses_its_specialized_controller() -> void:
 	var machinist: Node = MachinistScene.instantiate()
 	assert_true(machinist is MachinistController, "Machinist should use MachinistController")
 	machinist.free()
+	var v: Node = VoidScene.instantiate()
+	assert_true(v is VoidController, "Void should use VoidController")
+	v.free()
+	var f: Node = FlintScene.instantiate()
+	assert_true(f is CharacterController, "Flint should use CharacterController")
+	f.free()
 
 # --- Kael: Riposte ---------------------------------------------------------
 
@@ -137,3 +147,29 @@ func test_machinist_drone_does_not_damage_allies() -> void:
 
 	machinist.detonate_drone()
 	assert_almost_eq(ally.current_hp, ally_hp_before, 0.01, "the drone must never damage allies")
+
+# --- Void: Nether Step -----------------------------------------------------
+
+func test_void_nether_step_teleports_forward() -> void:
+	var void_hero: VoidController = _spawn(VoidScene, MatchState.Team.TEAM_A, Vector2.ZERO) as VoidController
+	void_hero.facing = Vector2.RIGHT
+	var pos_before: Vector2 = void_hero.position
+
+	void_hero.cast_nether_step()
+	void_hero._process_ability_frames(1.0) # active phase
+	assert_gt(void_hero.position.x, pos_before.x, "Nether Step should teleport Void forward")
+	assert_almost_eq(void_hero.position.x, pos_before.x + VoidController.TELEPORT_DISTANCE, 1.0)
+
+# --- Flint: Quick Shot -----------------------------------------------------
+
+func test_flint_quick_shot_fires_projectile() -> void:
+	var flint: CharacterController = _spawn(FlintScene, MatchState.Team.TEAM_A, Vector2.ZERO)
+	flint.facing = Vector2.RIGHT
+	flint.cast_ability(flint.hero_definition.skill_1)
+	flint._process_ability_frames(1.0)
+
+	var proj: Projectile = null
+	for child in flint.get_parent().get_children():
+		if child is Projectile:
+			proj = child
+	assert_not_null(proj, "Flint's Quick Shot should spawn a Projectile")

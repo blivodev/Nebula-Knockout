@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"void_void_beam"
+display_name = "Void Beam"
+description = "Fires a concentrated beam of dark cosmic energy that pierces through all enemies in its path. SKILLSHOT -> fired as a piercing projectile by CharacterController."
+cooldown_sec = 4.0
+resource_cost = 0.0
+cast_type = 1
+cast_range = 700.0
+radius = 0.0
+startup_frames = 6
+active_frames = 2
+recovery_frames = 10
+hitstop_frames = 3
+is_heal = false
+base_damage = 75.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+projectile_speed = 950.0
+projectile_max_range = 700.0
+projectile_pierce = true
+projectile_color = Color(0.65, 0.2, 0.95, 1)

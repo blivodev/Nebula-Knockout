@@ -44,13 +44,14 @@ func _process_ability_frames(delta: float) -> void:
 
 ## Riposte parry: a hit taken during the parry window is fully negated, and
 ## the attacker is countered for the ability's damage value.
-func take_damage(amount: float, source: Node = null) -> void:
+func take_damage(amount: float, source: Node = null, knockback: Vector2 = Vector2.ZERO) -> void:
 	if _is_riposting() and source is CharacterController:
 		var attacker := source as CharacterController
 		if attacker.has_method("take_damage"):
-			attacker.call("take_damage", _active_ability.base_damage, self)
+			var kb_dir: Vector2 = facing.normalized() if facing.length_squared() > 0.01 else Vector2.RIGHT
+			attacker.call("take_damage", _active_ability.base_damage, self, kb_dir * _active_ability.knockback_vector.x)
 		return # negate the incoming hit entirely
-	super.take_damage(amount, source)
+	super.take_damage(amount, source, knockback)
 
 func _is_riposting() -> bool:
 	return (

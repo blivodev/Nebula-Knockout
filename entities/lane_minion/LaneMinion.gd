@@ -29,6 +29,7 @@ var _waypoint_index: int = 0
 var _attack_timer: float = 0.0
 var _attack_target: Node2D = null
 var _last_hit_player_id: int = -1 # last PLAYER (not minion) to damage us
+var _knockback_timer: float = 0.0
 
 @onready var nav_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var visual: Polygon2D = $Visual
@@ -60,6 +61,12 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if MatchState.phase != MatchState.Phase.IN_PROGRESS:
+		return
+
+	if _knockback_timer > 0.0:
+		_knockback_timer -= delta
+		velocity = velocity.move_toward(Vector2.ZERO, 1200.0 * delta)
+		move_and_slide()
 		return
 
 	_attack_timer = max(0.0, _attack_timer - delta)
@@ -127,8 +134,11 @@ func _on_aggro_area_exited(area: Area2D) -> void:
 ## Called by whatever hit us (an ability's hitbox, another minion, a
 ## tower). A CharacterController source force-locks aggro onto the
 ## attacking player and remembers them for last-hit gold.
-func take_damage(amount: float, source: Node = null) -> void:
+func take_damage(amount: float, source: Node = null, knockback: Vector2 = Vector2.ZERO) -> void:
 	current_hp = max(0.0, current_hp - amount)
+	if knockback.length_squared() > 0.0:
+		velocity = knockback
+		_knockback_timer = 0.2
 	if source is CharacterController:
 		var attacker := source as CharacterController
 		if attacker.team != team:

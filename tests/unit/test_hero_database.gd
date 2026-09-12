@@ -1,12 +1,20 @@
 extends GutTest
-## Verifies the four proof-of-concept heroes (one per class) load through
+## Verifies the proof-of-concept heroes load through
 ## the HeroDatabase autoload and each has a complete kit.
 
-const EXPECTED_HERO_IDS: Array[StringName] = [&"kael", &"bastion", &"monk", &"machinist", &"pyra"]
+const EXPECTED_HERO_IDS: Array[StringName] = [
+	&"kael",
+	&"bastion",
+	&"monk",
+	&"machinist",
+	&"pyra",
+	&"void",
+	&"flint",
+]
 
 func test_hero_database_loads_all_authored_heroes() -> void:
 	HeroDatabase.reload()
-	assert_eq(HeroDatabase.count(), 5, "Kael, Bastion, Monk, Machinist, Pyra should all load")
+	assert_eq(HeroDatabase.count(), 7, "Kael, Bastion, Monk, Machinist, Pyra, Void, Flint should all load")
 
 func test_each_expected_hero_is_present() -> void:
 	HeroDatabase.reload()

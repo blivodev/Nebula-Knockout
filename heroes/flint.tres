@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/flint_quick_shot.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/flint_rapid_strafe.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/flint_trick_shot.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/flint_bullet_storm.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/flint.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"flint"
+display_name = "Flint"
+hero_class = 0
+attack_type = 1
+role_tag = 2
+base_max_hp = 570.0
+base_move_speed = 320.0
+base_dash_speed = 920.0
+base_armor = 0.0
+base_attack_damage = 54.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs well with Peel supports and CC tanks who give him space to kite and unload rapid-fire shots."
+lore_hook = "Ex-bounty hunter from the dust colonies, Flint never pulls one trigger when two will settle the contract faster."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/flint/Flint.tscn"

@@ -224,6 +224,20 @@ all pass clean — 61/61 tests, no script errors):
   burn), Flame Nova (AOE + burn), Cinder Field (wide AOE + burn), Inferno
   (ultimate AOE + burn). Uses the base `CharacterController` — pure data,
   proving the projectile/AOE path. Art generated via the same MCP pipeline.
+- **Void** (6th hero, Damage/Magic cosmic dark mage): Void Beam (piercing
+  SKILLSHOT), Nether Step (bespoke teleport blink in `VoidController`),
+  Abyssal Rift (AOE slow), Event Horizon (ultimate AOE). Art generated via
+  ComfyUI Z-Image Turbo + BiRefNet cutout.
+- **Flint** (7th hero, Damage/Ranged dual-pistol gunslinger): Quick Shot (fast
+  SKILLSHOT), Rapid Strafe (combat slide), Trick Shot (piercing SKILLSHOT),
+  Bullet Storm (ultimate AOE). Pure data using the base `CharacterController`,
+  following Pyra's no-code precedent. Art generated via ComfyUI Z-Image Turbo
+  + BiRefNet cutout.
+- **Knockback system**: `knockback_vector` and Smash-style `knockback_scaling`
+  are now fully active and applied across melee attacks (`_apply_hit_to`),
+  projectiles (`Projectile._hit`), and radial AOEs (`_apply_aoe`). Both
+  `CharacterController` and `LaneMinion` receive knockback velocity and
+  friction-decelerate in `_physics_process`.
 - **Animation**: `HeroAnimator` (`core/`) is added automatically to every
   hero's `Visual` node and gives procedural idle bob / walk sway / cast pop /
   hit flash / dash stretch / death squash, driven by the state machine. This
@@ -233,14 +247,14 @@ all pass clean — 61/61 tests, no script errors):
   (`project.godot` `run/main_scene`). It owns Draft -> Match -> Post-match
   -> Play Again: locking a hero spawns the arena with that hero, the enemy
   team is auto-filled, and base destruction shows a victory/defeat summary.
-- GUT suite (61 tests): map symmetry, economy, rig importer, hero database,
-  hero scenes, items/inventory, shop, draft, hero mechanics, match flow,
-  status effects, projectiles.
+- GUT suite (**69 tests across 13 scripts**, all green): map symmetry,
+  economy, rig importer, hero database, hero scenes, items/inventory, shop,
+  draft, hero mechanics, match flow, status effects, projectiles, knockback.
 
 **Explicitly not built yet** (next work, suited to the `build`/DeepSeek
 agent):
 
-- The remaining 25 heroes (roster in `docs/deepseek_prompt.md` §4). The
+- The remaining 23 heroes (roster in `docs/deepseek_prompt.md` §4). The
   pattern is now fully established: 4 ability `.tres` + 1 hero `.tres` +
   1 scene + 1 art PNG; ranged/mage kits need no controller code at all.
 - Per-hero bits still data-only: Kael's multi-hit Thousand Cuts, Bastion's

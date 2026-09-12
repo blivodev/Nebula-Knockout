@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"void_nether_step"
+display_name = "Nether Step"
+description = "Blinks instantly through space in the direction Void is facing. INSTANT -> implemented in VoidController to displace Void forward."
+cooldown_sec = 9.0
+resource_cost = 0.0
+cast_type = 0
+cast_range = 220.0
+radius = 0.0
+startup_frames = 2
+active_frames = 2
+recovery_frames = 6
+hitstop_frames = 0
+is_heal = false
+base_damage = 0.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
