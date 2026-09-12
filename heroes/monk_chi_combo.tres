@@ -6,7 +6,7 @@
 script = ExtResource("1")
 ability_id = &"monk_chi_combo"
 display_name = "Chi Combo"
-description = "Landing basic attacks stacks Chi; consuming a full stack empowers the next heal. DATA ONLY -- stack tracking and the empowered-heal interaction are not implemented yet (see docs/ARCHITECTURE.md Section 5)."
+description = "Passive: each Flowing Palm cast builds a Chi stack (max 3); a full stack empowers the next Flowing Palm heal by +50% and is consumed. Implemented in MonkController (Chi Combo stack tracking in cast_skill_1)."
 cooldown_sec = 0.0
 resource_cost = 0.0
 cast_type = 4

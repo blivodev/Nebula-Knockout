@@ -320,3 +320,80 @@ func test_kael_thousand_cuts_lands_every_pulse() -> void:
 		hp_before - enemy.current_hp, ult.base_damage, 0.01,
 		"the pulses should sum to the combined base_damage"
 	)
+
+# --- Monk: Chi Combo ---------------------------------------------------------
+
+func test_monk_chi_combo_stacks_then_empowers_the_heal() -> void:
+	var healer: MonkController = _spawn(
+		MonkScene, MatchState.Team.TEAM_A, Vector2.ZERO
+	) as MonkController
+	var ally: CharacterController = _spawn(MonkScene, MatchState.Team.TEAM_A, Vector2(50, 0))
+
+	# Three normal Flowing Palm casts build the full Chi stack (cooldowns
+	# cleared and the cast stepped to completion between casts -- stack
+	# logic, not cooldown timing, is under test). Step past IDLE with slack:
+	# frame-timer float epsilon can delay a phase transition by one call.
+	for i in range(3):
+		ally.current_hp = 100.0
+		healer._cooldowns.clear()
+		healer.cast_skill_1()
+		assert_almost_eq(ally.current_hp, 160.0, 0.01, "cast %d should heal the normal amount" % (i + 1))
+		assert_eq(healer.get_chi_stacks(), i + 1, "cast %d should build a Chi stack" % (i + 1))
+		var guard: int = 0
+		while healer.state != CharacterController.State.IDLE and guard < 60:
+			healer._process_ability_frames(1.0 / 60.0)
+			guard += 1
+
+	# Fourth cast with full Chi: empowered heal (+50%) and stacks consumed.
+	ally.current_hp = 100.0
+	healer._cooldowns.clear()
+	healer.cast_skill_1()
+	assert_almost_eq(ally.current_hp, 190.0, 0.01, "full Chi should empower the heal by 50%")
+	assert_eq(healer.get_chi_stacks(), 0, "the empowered cast should consume the Chi stacks")
+
+# --- Machinist: drone seeking -------------------------------------------------
+
+func test_scout_drone_seeks_the_nearest_enemy() -> void:
+	var machinist: MachinistController = _spawn(
+		MachinistScene, MatchState.Team.TEAM_A, Vector2.ZERO
+	) as MachinistController
+	machinist.facing = Vector2.UP
+	machinist.deploy_drone()
+
+	var drone: ScoutDrone = null
+	for child in machinist.get_parent().get_children():
+		if child is ScoutDrone:
+			drone = child
+	assert_not_null(drone, "Scout Drone should deploy")
+	if drone == null:
+		return
+
+	# An enemy appears to the right of the drone's CURRENT position, well
+	# inside seek range. The drone was flying UP -- one seek step should
+	# steer it toward the enemy instead.
+	var enemy: CharacterController = _spawn(
+		MonkScene, MatchState.Team.TEAM_B, Vector2(200, drone.position.y)
+	)
+	assert_eq(drone.direction, Vector2.UP, "precondition: drone initially flies its deployed direction")
+	drone._process(1.0 / 60.0)
+	assert_gt(drone.direction.x, 0.99, "the drone should steer toward the nearest enemy")
+	assert_almost_eq(drone.direction.y, 0.0, 0.01, "steering should point straight at the enemy")
+
+func test_scout_drone_keeps_heading_without_enemies_in_range() -> void:
+	var drone: ScoutDrone = null
+	var machinist: MachinistController = _spawn(
+		MachinistScene, MatchState.Team.TEAM_A, Vector2.ZERO
+	) as MachinistController
+	machinist.facing = Vector2.UP
+	machinist.deploy_drone()
+	for child in machinist.get_parent().get_children():
+		if child is ScoutDrone:
+			drone = child
+	assert_not_null(drone, "Scout Drone should deploy")
+	if drone == null:
+		return
+
+	var pos_before: Vector2 = drone.position
+	drone._process(1.0 / 60.0)
+	assert_eq(drone.direction, Vector2.UP, "no enemies in range -> keep the deployed heading")
+	assert_lt(drone.position.y, pos_before.y, "the drone should keep flying forward")

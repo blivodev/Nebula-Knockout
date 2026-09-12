@@ -6,7 +6,7 @@
 script = ExtResource("1")
 ability_id = &"machinist_scout_drone"
 display_name = "Scout Drone"
-description = "Deploys an FPV drone that flies forward (one at a time). Implemented in MachinistController.deploy_drone(); the fog-of-war vision reveal is not implemented yet."
+description = "Deploys an FPV drone that flies forward and seeks the nearest enemy within its seek radius (one at a time). Implemented in MachinistController.deploy_drone() + ScoutDrone._nearest_enemy(); the fog-of-war vision reveal is not implemented yet."
 cooldown_sec = 10.0
 resource_cost = 0.0
 cast_type = 4

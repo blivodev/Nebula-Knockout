@@ -4,6 +4,9 @@
 export_presets.cfg
 *.translation
 
+# Exported builds (never commit binaries)
+build/
+
 # Editor swap/backups
 *.tmp
 *~

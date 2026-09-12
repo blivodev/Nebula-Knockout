@@ -2,14 +2,18 @@ class_name MonkController
 extends CharacterController
 ## Monk: melee support healer. Real mechanics implemented here:
 ##   - Flowing Palm (Q): heals the lowest-HP living ally in range, or self.
+##   - Chi Combo (E): passive -- each Flowing Palm cast builds a Chi stack
+##     (max 3); a full stack empowers the next Flowing Palm by +50% and is
+##     consumed.
 ##   - Serenity Step (R): a short repositioning dash.
 ##   - Harmonic Convergence (F): burst-heals every ally in a large radius.
-## Chi Combo (E) stays data-only: stack tracking / empowered-heal is a
-## follow-up (docs/ARCHITECTURE.md Section 5).
 
 const SERENITY_STEP_ID: StringName = &"monk_serenity_step"
+const CHI_MAX_STACKS: int = 3
+const EMPOWERED_HEAL_MULT: float = 1.5
 
 var _step_direction: Vector2 = Vector2.RIGHT
+var _chi_stacks: int = 0
 
 func _on_skill_pressed(slot: int) -> void:
 	match slot:
@@ -22,6 +26,9 @@ func _on_skill_pressed(slot: int) -> void:
 		3:
 			cast_ultimate()
 
+func get_chi_stacks() -> int:
+	return _chi_stacks
+
 func cast_skill_1() -> void:
 	var ability: AbilityDefinition = hero_definition.skill_1 if hero_definition != null else null
 	if not _can_cast(ability):
@@ -29,7 +36,14 @@ func cast_skill_1() -> void:
 	var target: CharacterController = lowest_hp_ally(ability.radius)
 	if target == null:
 		target = self
-	target.heal(ability.base_damage)
+	var heal_amount: float = ability.base_damage
+	if _chi_stacks >= CHI_MAX_STACKS:
+		# Full Chi: the next heal is empowered and consumes the stacks.
+		heal_amount *= EMPOWERED_HEAL_MULT
+		_chi_stacks = 0
+	else:
+		_chi_stacks = mini(_chi_stacks + 1, CHI_MAX_STACKS)
+	target.heal(heal_amount)
 	cast_ability(ability)
 
 func cast_serenity_step(direction: Vector2) -> void:
