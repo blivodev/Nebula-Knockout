@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/ItemDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = &"aegis_core"
+display_name = "Aegis Core"
+description = "A humming lattice of light that hardens the moment its bearer falters."
+category = 1
+gold_cost = 550
+bonus_max_hp = 250.0
+bonus_armor = 20.0
+passive_id = &"aegis_core"
+passive_description = "Below 30% HP, gain a shield equal to 15% of max HP (60s cooldown)."

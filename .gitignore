@@ -1,0 +1,19 @@
+# Godot 4 editor cache / import artifacts
+.godot/
+.import/
+export_presets.cfg
+*.translation
+
+# Editor swap/backups
+*.tmp
+*~
+
+# OS cruft
+Thumbs.db
+.DS_Store
+
+# Node (npx-cached MCP server tooling, if ever run locally instead of via npx cache)
+node_modules/
+
+# GDAI MCP local state
+addons/gdai-mcp-plugin-godot/.godot_ai_logs/

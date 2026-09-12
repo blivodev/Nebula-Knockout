@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"machinist_detonate"
+display_name = "Detonate"
+description = "Detonates the active drone for an area burst that damages enemies. Implemented in MachinistController.detonate_drone()."
+cooldown_sec = 1.0
+resource_cost = 0.0
+cast_type = 2
+cast_range = 0.0
+radius = 120.0
+startup_frames = 2
+active_frames = 2
+recovery_frames = 6
+hitstop_frames = 6
+is_heal = false
+base_damage = 90.0
+knockback_vector = Vector2(180, 0)
+knockback_scaling = 0.1

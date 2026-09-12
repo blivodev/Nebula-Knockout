@@ -1,0 +1,57 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Nebula Knockout"
+config/description="A 2.5D Brawler-MOBA hybrid. See docs/ARCHITECTURE.md."
+run/main_scene="res://scenes/GameRoot.tscn"
+config/features=PackedStringArray("4.6")
+
+[autoload]
+
+MatchState="*res://autoload/MatchState.gd"
+MatchEconomy="*res://autoload/MatchEconomy.gd"
+HeroDatabase="*res://autoload/HeroDatabase.gd"
+ItemDatabase="*res://autoload/ItemDatabase.gd"
+PlayerInventory="*res://autoload/PlayerInventory.gd"
+AudioDirector="*res://autoload/AudioDirector.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdai-mcp-plugin-godot/plugin.cfg", "res://addons/gut/plugin.cfg")
+
+[layer_names]
+
+2d_physics/layer_1="team_a"
+2d_physics/layer_2="team_b"
+2d_physics/layer_3="neutral"
+2d_physics/layer_4="hitbox"
+2d_physics/layer_5="hurtbox"
+2d_physics/layer_6="structures"
+
+[physics]
+
+2d/default_gravity=0
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+; 1 = Linear filtering. The character art is smooth high-res cartoon art
+; (docs/ART_STYLE.md), not pixel art, so nearest-neighbour would alias badly
+; when the 832x1216 source is scaled down to in-world sprite size.
+textures/canvas_textures/default_texture_filter=1

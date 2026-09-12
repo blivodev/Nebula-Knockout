@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/pyra_ember_bolt.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/pyra_flame_nova.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/pyra_cinder_field.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/pyra_inferno.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/pyra.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"pyra"
+display_name = "Pyra"
+hero_class = 0
+attack_type = 2
+role_tag = 2
+base_max_hp = 540.0
+base_move_speed = 310.0
+base_dash_speed = 850.0
+base_armor = 0.0
+base_attack_damage = 50.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs well with Tanks who hold enemies inside her cinder fields, and Supports who keep her alive while she channels her long-range burst."
+lore_hook = "A wildfire given a name, Pyra burned her own village's pyre and walked out of it to find out what she had become."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/pyra/Pyra.tscn"

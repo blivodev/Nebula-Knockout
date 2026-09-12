@@ -1,0 +1,106 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // MCP tools for the Nebula Knockout MCP asset pipeline (Section 1 of
+  // docs/deepseek_prompt.md). These merge with the global opencode.jsonc,
+  // which already points the "build" agent at DeepSeek — this file just
+  // adds the tools that agent needs for this project.
+  "mcp": {
+    // ComfyUI control plane: image generation (character parts, environment
+    // tiles) AND audio generation (Stable Audio 3 / ACE-Step music+SFX live
+    // inside ComfyUI workflows, exposed via the same tool). Auto-detects a
+    // local ComfyUI on 127.0.0.1:8188 or :8000.
+    //
+    // NOTE: comfyui-mcp (artokun) is marked unmaintained upstream as of this
+    // writing, in favor of the official Comfy-Org "Comfy MCP" / "Comfy
+    // Agent" tooling (see https://comfy.org/mcp). It still functions today
+    // and is by far the most complete community option, so it's wired in
+    // now; swap to the official package once it's stable if you hit issues.
+    "comfyui": {
+      "type": "local",
+      "command": ["npx", "-y", "comfyui-mcp"],
+      "enabled": true,
+      "environment": {
+        // Uncomment and set if ComfyUI isn't auto-detected (e.g. it's
+        // running as a Pinokio app on a non-default host/port):
+        // "COMFYUI_URL": "http://127.0.0.1:8188"
+      }
+    },
+
+    // Local LLM bridge (Ollama) for lightweight generative text tasks in
+    // the pipeline (lore hooks, VO/flavor text, prompt rewriting) without
+    // burning cloud-model budget. Requires `ollama serve` running locally.
+    "ollama": {
+      "type": "local",
+      "command": ["npx", "-y", "ollama-mcp-server"],
+      "enabled": true,
+      "environment": {
+        "OLLAMA_HOST": "http://127.0.0.1:11434"
+      }
+    },
+
+    // Headless Godot 4 authoring: creates/edits .tscn scenes, GDScript,
+    // shaders, tilemaps, animation players/tracks, physics layers, audio
+    // buses, navigation regions, and UI controls directly on project files
+    // -- no running editor required. Free, Apache-2.0, actively maintained,
+    // explicitly tested with opencode. Use this for bulk-generating the 30
+    // hero scenes/resources. Godot 4.6 binary auto-detected (found on PATH).
+    "godot": {
+      "type": "local",
+      "command": ["npx", "-y", "@n24q02m/better-godot-mcp"],
+      "enabled": true,
+      "environment": {
+        "GODOT_PROJECT_PATH": "D:/Projects/Nebula Knockout"
+      }
+    },
+
+    // GDAI MCP (paid, already purchased, v0.3.3): live Godot EDITOR control
+    // -- screenshots of the editor/running game, reading runtime errors and
+    // stack traces, executing arbitrary GDScript in-editor, play/stop
+    // scenes. Complements "godot" above (which works headless/offline).
+    //
+    // IMPORTANT: this only works while the project is open in the Godot
+    // Editor AND the "GDAI MCP" dock tab's server has been started there.
+    // With the editor closed (or the dock server stopped), tool calls will
+    // fail with a connection error -- that's expected, not a config bug.
+    "gdai-mcp": {
+      "type": "local",
+      "command": ["uv", "run", "D:/Projects/Nebula Knockout/addons/gdai-mcp-plugin-godot/gdai_mcp_server.py"],
+      "enabled": true
+    },
+
+    // Freesound.org search + download: real, CC-licensed recorded SFX
+    // (footsteps, hits, ambience) as a free/legal complement to AI-generated
+    // audio. Free API key required (one-time signup, no cost):
+    // https://freesound.org/docs/api/authentication.html
+    "freesound": {
+      "type": "local",
+      "command": ["npx", "-y", "@mushan_bit/freesound-mcp"],
+      "enabled": true,
+      "environment": {
+        "FREESOUND_API_KEY": "<paste-your-key-here>"
+      }
+    },
+
+    // Local music generation (Meta MusicGen via HuggingFace transformers),
+    // run from its own pre-existing venv. Free, offline, no API key, no
+    // account. Exposes one tool: generate_music(prompt, duration_seconds)
+    // -> absolute path to a .wav. First call lazily downloads
+    // facebook/musicgen-small (~1.5GB) into the HF cache. Output lands in
+    // ~/Music/musicgen-mcp/. This is what AudioDirector's Music bus should
+    // be fed from for the "custom battle loops" requirement; pair with the
+    // `freesound` server for real recorded SFX.
+    //
+    // NOTE: this server runs on CPU unless CUDA is available (this box is
+    // ROCm, so torch in that venv would need to be a ROCm build to use the
+    // GPU — otherwise expect ~1-3 min per 10s of audio).
+    "musicgen": {
+      "type": "local",
+      "command": [
+        "C:/Users/USER/mcp-servers/musicgen-mcp/venv/Scripts/python.exe",
+        "C:/Users/USER/mcp-servers/musicgen-mcp/mcp_server.py"
+      ],
+      "enabled": true
+    }
+  }
+}

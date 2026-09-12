@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"kael_phantom_dash"
+display_name = "Phantom Dash"
+description = "Kael blinks forward through enemies, briefly untargetable. Bespoke movement logic lives in KaelController._process_ability_frames() since the generic base class only toggles hitboxes, not velocity."
+cooldown_sec = 6.0
+resource_cost = 0.0
+cast_type = 4
+cast_range = 0.0
+radius = 0.0
+startup_frames = 3
+active_frames = 8
+recovery_frames = 6
+hitstop_frames = 0
+is_heal = false
+base_damage = 0.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0

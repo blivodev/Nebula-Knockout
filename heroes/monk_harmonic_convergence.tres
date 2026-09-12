@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"monk_harmonic_convergence"
+display_name = "Harmonic Convergence"
+description = "Monk's ultimate: a large burst heal to every ally within radius. The move/attack-speed buff portion is not implemented yet. Heal implemented in MonkController.cast_ultimate()."
+cooldown_sec = 80.0
+resource_cost = 100.0
+cast_type = 2
+cast_range = 0.0
+radius = 260.0
+startup_frames = 12
+active_frames = 4
+recovery_frames = 18
+hitstop_frames = 0
+is_heal = true
+base_damage = 180.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0

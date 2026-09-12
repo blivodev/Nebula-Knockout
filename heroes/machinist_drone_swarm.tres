@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"machinist_drone_swarm"
+display_name = "Drone Swarm"
+description = "Machinist's ultimate: deploys three drones in a spread. Implemented in MachinistController.cast_ultimate(); the seeking/homing behavior is not implemented yet (they fly straight and must be detonated or expire). base_damage is per-drone."
+cooldown_sec = 85.0
+resource_cost = 100.0
+cast_type = 2
+cast_range = 0.0
+radius = 200.0
+startup_frames = 12
+active_frames = 6
+recovery_frames = 20
+hitstop_frames = 6
+is_heal = false
+base_damage = 70.0
+knockback_vector = Vector2(120, 0)
+knockback_scaling = 0.15

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/monk_flowing_palm.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/monk_chi_combo.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/monk_serenity_step.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/monk_harmonic_convergence.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/monk.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"monk"
+display_name = "Monk"
+hero_class = 2
+attack_type = 0
+role_tag = 1
+base_max_hp = 650.0
+base_move_speed = 320.0
+base_dash_speed = 850.0
+base_armor = 10.0
+base_attack_damage = 40.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs well with Damage divers he can heal-chase, and Tanks whose frontline combo chains keep his Chi stacks topped up."
+lore_hook = "A wandering martial artist who left his monastery to prove that healing hands and striking hands were never truly two different disciplines."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/monk/Monk.tscn"

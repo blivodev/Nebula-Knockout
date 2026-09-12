@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/ItemDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = &"siegebreaker_gauntlets"
+display_name = "Siegebreaker Gauntlets"
+description = "Weighted knuckles built to crack masonry, not just ribs."
+category = 0
+gold_cost = 450
+bonus_attack_damage = 30.0
+passive_id = &"siegebreaker_gauntlets"
+passive_description = "Basic attacks deal 40% bonus damage to structures."

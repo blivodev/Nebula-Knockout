@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://statuses/burn.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"pyra_flame_nova"
+display_name = "Flame Nova"
+description = "A ring of fire erupts around Pyra, burning every enemy caught in it. AOE -> applied by the base CharacterController."
+cooldown_sec = 9.0
+resource_cost = 0.0
+cast_type = 2
+cast_range = 0.0
+radius = 170.0
+startup_frames = 8
+active_frames = 3
+recovery_frames = 12
+hitstop_frames = 4
+is_heal = false
+base_damage = 90.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+status_effect = ExtResource("2")

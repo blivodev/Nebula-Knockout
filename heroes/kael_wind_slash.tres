@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"kael_wind_slash"
+display_name = "Wind Slash"
+description = "A quick forward slash that cleaves through the first enemy hit. Uses the generic frame-data hitbox timing directly -- no bespoke script logic needed."
+cooldown_sec = 3.0
+resource_cost = 0.0
+cast_type = 1
+cast_range = 140.0
+radius = 40.0
+startup_frames = 6
+active_frames = 4
+recovery_frames = 10
+hitstop_frames = 4
+is_heal = false
+base_damage = 65.0
+knockback_vector = Vector2(220, 0)
+knockback_scaling = 0.15

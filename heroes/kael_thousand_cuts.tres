@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"kael_thousand_cuts"
+display_name = "Thousand Cuts"
+description = "Kael's ultimate: a rapid multi-hit flurry around himself. DATA ONLY -- multi-hit AOE special-casing (repeated damage ticks within one cast) is not implemented yet (see docs/ARCHITECTURE.md Section 5); base_damage currently represents a single combined-hit value, not per-tick damage."
+cooldown_sec = 70.0
+resource_cost = 100.0
+cast_type = 2
+cast_range = 0.0
+radius = 160.0
+startup_frames = 10
+active_frames = 24
+recovery_frames = 20
+hitstop_frames = 10
+is_heal = false
+base_damage = 260.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.3

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/ItemDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = &"cloud_architects_cloak"
+display_name = "Cloud Architect's Cloak"
+description = "Woven from vapor-thin theorems. A single hostile spell simply fails to land."
+category = 2
+gold_cost = 500
+bonus_ability_power = 20.0
+passive_id = &"cloud_architects_cloak"
+passive_description = "Grants an ethereal shield that blocks the next enemy ability hit. Recharges after 20s."

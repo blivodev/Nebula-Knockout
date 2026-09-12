@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"bastion_shield_bash"
+display_name = "Shield Bash"
+description = "Bastion slams his tower shield forward, knocking the target back hard. DATA ONLY -- uses the generic frame-data hitbox timing (no bespoke script needed, same pattern as Kael's Wind Slash) but not yet wired to a concrete BastionController."
+cooldown_sec = 5.0
+resource_cost = 0.0
+cast_type = 0
+cast_range = 60.0
+radius = 0.0
+startup_frames = 8
+active_frames = 3
+recovery_frames = 14
+hitstop_frames = 6
+is_heal = false
+base_damage = 40.0
+knockback_vector = Vector2(340, 0)
+knockback_scaling = 0.1

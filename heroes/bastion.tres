@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/bastion_shield_bash.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/bastion_bulwark_wall.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/bastion_guard_stance.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/bastion_unbreakable.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/bastion.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"bastion"
+display_name = "Bastion"
+hero_class = 1
+attack_type = 0
+role_tag = 0
+base_max_hp = 1100.0
+base_move_speed = 260.0
+base_dash_speed = 650.0
+base_armor = 25.0
+base_attack_damage = 35.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs well with ranged Damage/Magic heroes he can wall off enemies for, and Supports who can top him off while he tanks the frontline."
+lore_hook = "A retired city guard captain who kept his tower shield after the wall he defended finally fell -- Bastion never lets a line break twice."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/bastion/Bastion.tscn"

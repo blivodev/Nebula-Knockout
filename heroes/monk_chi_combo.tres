@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"monk_chi_combo"
+display_name = "Chi Combo"
+description = "Landing basic attacks stacks Chi; consuming a full stack empowers the next heal. DATA ONLY -- stack tracking and the empowered-heal interaction are not implemented yet (see docs/ARCHITECTURE.md Section 5)."
+cooldown_sec = 0.0
+resource_cost = 0.0
+cast_type = 4
+cast_range = 0.0
+radius = 0.0
+startup_frames = 0
+active_frames = 1
+recovery_frames = 0
+hitstop_frames = 0
+is_heal = false
+base_damage = 0.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0

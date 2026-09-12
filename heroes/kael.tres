@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/kael_wind_slash.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/kael_phantom_dash.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/kael_riposte.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/kael_thousand_cuts.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/kael.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"kael"
+display_name = "Kael"
+hero_class = 0
+attack_type = 0
+role_tag = 0
+base_max_hp = 580.0
+base_move_speed = 340.0
+base_dash_speed = 1100.0
+base_armor = 0.0
+base_attack_damage = 55.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs well with Tanks who can peel divers off him after he dashes in, and Supports who can follow his dash to pick off isolated targets."
+lore_hook = "A swift blademaster who trained under three fallen kingdoms' masters-at-arms, Kael fights for no banner but his own -- and the next worthy duel."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/kael/Kael.tscn"

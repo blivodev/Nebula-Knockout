@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://statuses/burn.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"pyra_ember_bolt"
+display_name = "Ember Bolt"
+description = "Hurls a bolt of fire that ignites the first enemy it strikes, burning them over time. SKILLSHOT -> fired as a projectile by the base CharacterController."
+cooldown_sec = 4.0
+resource_cost = 0.0
+cast_type = 1
+cast_range = 620.0
+radius = 0.0
+startup_frames = 6
+active_frames = 2
+recovery_frames = 8
+hitstop_frames = 3
+is_heal = false
+base_damage = 70.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+projectile_speed = 720.0
+projectile_max_range = 620.0
+projectile_pierce = false
+projectile_color = Color(1, 0.45, 0.1, 1)
+status_effect = ExtResource("2")

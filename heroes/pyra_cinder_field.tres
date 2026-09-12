@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://statuses/burn.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"pyra_cinder_field"
+display_name = "Cinder Field"
+description = "Ignites the ground around Pyra, burning enemies in a wide area. AOE -> applied by the base CharacterController. (A persistent ground-zone version is future work.)"
+cooldown_sec = 14.0
+resource_cost = 0.0
+cast_type = 2
+cast_range = 0.0
+radius = 220.0
+startup_frames = 10
+active_frames = 4
+recovery_frames = 14
+hitstop_frames = 3
+is_heal = false
+base_damage = 40.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+status_effect = ExtResource("2")

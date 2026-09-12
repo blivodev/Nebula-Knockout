@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://statuses/burn.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"pyra_inferno"
+display_name = "Inferno"
+description = "Pyra's ultimate: a huge firestorm that engulfs a large area, dealing heavy damage and igniting everyone caught in it. AOE -> applied by the base CharacterController."
+cooldown_sec = 80.0
+resource_cost = 100.0
+cast_type = 2
+cast_range = 0.0
+radius = 320.0
+startup_frames = 14
+active_frames = 6
+recovery_frames = 20
+hitstop_frames = 8
+is_heal = false
+base_damage = 220.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
+status_effect = ExtResource("2")

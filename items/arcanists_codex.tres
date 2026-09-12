@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/ItemDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = &"arcanists_codex"
+display_name = "Arcanist's Codex"
+description = "Pages that rewrite themselves as fast as their reader can cast."
+category = 3
+gold_cost = 500
+bonus_ability_power = 40.0
+bonus_cooldown_reduction = 0.15
+passive_id = &"arcanists_codex"
+passive_description = "Ability hits reduce all of your remaining cooldowns by 0.5s."

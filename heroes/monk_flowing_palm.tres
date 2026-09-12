@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"monk_flowing_palm"
+display_name = "Flowing Palm"
+description = "A quick heal to the lowest-health living ally within radius (or Monk himself). Implemented in MonkController.cast_skill_1(); is_heal=true and base_damage is HP restored."
+cooldown_sec = 4.0
+resource_cost = 0.0
+cast_type = 2
+cast_range = 0.0
+radius = 120.0
+startup_frames = 6
+active_frames = 2
+recovery_frames = 8
+hitstop_frames = 0
+is_heal = true
+base_damage = 60.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/ItemDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = &"hunters_hardtack"
+display_name = "Hunter's Hardtack"
+description = "Dense travel rations. Sustain in lane without recalling."
+category = 2
+gold_cost = 400
+bonus_max_hp = 150.0
+passive_id = &"hunters_hardtack"
+passive_description = "After 5s out of combat, regenerate 2% of max HP per second."

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/ItemDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = &"glycerin_treads"
+display_name = "Glycerin Treads"
+description = "Boots that seem to skate a half-inch above the ground."
+category = 2
+gold_cost = 350
+bonus_move_speed = 40.0
+bonus_dash_speed = 120.0
+passive_id = &"glycerin_treads"
+passive_description = "Increases move and dash speed; dash cooldown reduced by 15%."

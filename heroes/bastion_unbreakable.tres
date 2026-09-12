@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"bastion_unbreakable"
+display_name = "Unbreakable"
+description = "Bastion's ultimate: a massive temporary shield and total knockup/knockback immunity. DATA ONLY -- immunity-status application is not implemented yet (see docs/ARCHITECTURE.md Section 5)."
+cooldown_sec = 90.0
+resource_cost = 100.0
+cast_type = 4
+cast_range = 0.0
+radius = 0.0
+startup_frames = 6
+active_frames = 150
+recovery_frames = 10
+hitstop_frames = 8
+is_heal = false
+base_damage = 0.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0

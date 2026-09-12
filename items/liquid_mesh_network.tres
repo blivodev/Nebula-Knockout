@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/ItemDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = &"liquid_mesh_network"
+display_name = "Liquid Mesh Network"
+description = "A conductive field that links nearby allies, spreading the burden of a blow."
+category = 2
+gold_cost = 600
+bonus_max_hp = 200.0
+bonus_armor = 10.0
+passive_id = &"liquid_mesh_network"
+passive_description = "Aura: nearby allies share 15% of damage taken, redistributed proportionally by current HP%."

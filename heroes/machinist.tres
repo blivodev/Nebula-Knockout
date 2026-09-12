@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/HeroDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://heroes/machinist_scout_drone.tres" id="2"]
+[ext_resource type="Resource" path="res://heroes/machinist_detonate.tres" id="3"]
+[ext_resource type="Resource" path="res://heroes/machinist_recall.tres" id="4"]
+[ext_resource type="Resource" path="res://heroes/machinist_drone_swarm.tres" id="5"]
+[ext_resource type="Texture2D" path="res://art/heroes/machinist.png" id="6"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"machinist"
+display_name = "Machinist"
+hero_class = 3
+attack_type = 1
+role_tag = 2
+base_max_hp = 560.0
+base_move_speed = 300.0
+base_dash_speed = 800.0
+base_armor = 0.0
+base_attack_damage = 45.0
+skill_1 = ExtResource("2")
+skill_2 = ExtResource("3")
+skill_3 = ExtResource("4")
+ultimate = ExtResource("5")
+synergy_note = "Pairs well with Tanks who can hold a line while her drones scout the jungle, and Supports who can keep her alive through her long cooldown windows."
+lore_hook = "A back-alley drone racer who bolted a detonator onto her hobby and discovered a talent for asymmetric warfare nobody asked her to prove."
+portrait = ExtResource("6")
+scene_path = "res://entities/heroes/machinist/Machinist.tscn"

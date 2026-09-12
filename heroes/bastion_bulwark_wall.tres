@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"bastion_bulwark_wall"
+display_name = "Bulwark Wall"
+description = "Projects a directional wall of solid light in front of Bastion that blocks movement for its lifetime, then despawns. Implemented in BastionController.cast_bulwark_wall(). Note: a single static body blocks both teams (see BulwarkWall.gd)."
+cooldown_sec = 18.0
+resource_cost = 0.0
+cast_type = 4
+cast_range = 100.0
+radius = 220.0
+startup_frames = 10
+active_frames = 1
+recovery_frames = 16
+hitstop_frames = 0
+is_heal = false
+base_damage = 0.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0

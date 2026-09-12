@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"kael_riposte"
+display_name = "Riposte"
+description = "Kael parries for a brief window. Any hit taken during the parry is fully negated, and the attacker is countered for this ability's damage. Implemented in KaelController.take_damage()."
+cooldown_sec = 10.0
+resource_cost = 0.0
+cast_type = 4
+cast_range = 0.0
+radius = 0.0
+startup_frames = 4
+active_frames = 10
+recovery_frames = 12
+hitstop_frames = 0
+is_heal = false
+base_damage = 90.0
+knockback_vector = Vector2(300, 0)
+knockback_scaling = 0.2

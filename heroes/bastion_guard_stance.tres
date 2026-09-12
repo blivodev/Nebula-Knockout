@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AbilityDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/definitions/AbilityDefinition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+ability_id = &"bastion_guard_stance"
+display_name = "Guard Stance"
+description = "Bastion braces behind his shield, taking greatly reduced damage and reflecting a portion of it back at attackers. DATA ONLY -- damage-reduction/reflect status application is not implemented yet (see docs/ARCHITECTURE.md Section 5); this is a channeled toggle, not a single hit."
+cooldown_sec = 12.0
+resource_cost = 0.0
+cast_type = 3
+cast_range = 0.0
+radius = 0.0
+startup_frames = 4
+active_frames = 90
+recovery_frames = 8
+hitstop_frames = 0
+is_heal = false
+base_damage = 0.0
+knockback_vector = Vector2(0, 0)
+knockback_scaling = 0.0
