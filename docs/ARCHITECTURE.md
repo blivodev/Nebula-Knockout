@@ -128,6 +128,8 @@ maps/
 
 art/heroes/<hero>.png          # transparent cutouts from the MCP pipeline
                                # (kael/bastion/monk/machinist) — see ART_STYLE.md
+art/minions/lane_minion.png    # transparent creature cutout, team-tinted at
+                               # runtime by LaneMinion.gd — see ART_STYLE.md
 
 heroes/                        # 4x HeroDefinition .tres + 16x AbilityDefinition
                                # (kael/bastion/monk/machinist, one per class)
@@ -278,8 +280,12 @@ all pass clean — 61/61 tests, no script errors):
   twinkling starfield, nebula gas clouds, a floating cosmic arena bridge with
   high-tech deck panels, glowing cyan/red team borders, center neutral ring,
   and glowing base dais platforms. `MainBuilding` features a rotating/pulsing
-  Nexus Core Crystal; `LaneMinion` features an armored chassis with glowing
-  visor and walk bounce.
+  Nexus Core Crystal; `LaneMinion` uses a team-tinted MCP-generated creature
+  sprite (`art/minions/lane_minion.png`, same Z-Image Turbo + BiRefNet
+  pipeline as the heroes) in place of the original procedural polygon, with
+  walk bounce/facing-flip, an attack pop, a hit flash, and a fading death
+  poof -- all purely cosmetic (`_process()`), so collision and AI timing are
+  unchanged.
 - **Procedural Audio Engine**: `SoundSynthesizer` (`core/audio/`) synthesizes
   crystal-clear 16-bit PCM AudioStreamWAV assets on startup with zero external
   file dependencies -- laser blasts, weapon swings, punch impacts, explosions,

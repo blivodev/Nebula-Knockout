@@ -5,9 +5,21 @@ extends Node2D
 ## end-to-end (mirrored structures, NavigationAgent2D lane pathing,
 ## minion-vs-minion/tower aggro, gold economy) before any hero content
 ## exists. See docs/ARCHITECTURE.md, Execution step 2.
+##
+## The lane is deliberately larger than a single camera view (see
+## ArenaVisuals.configure() and the Camera2D zoom in TestArena.tscn):
+## the whole map should never be visible at once, so players have to
+## walk (and the camera has to follow) to see the rest of it.
 
-const LANE_HALF_LENGTH: float = 800.0
+const LANE_HALF_LENGTH: float = 32000.0
 const LANE_HALF_WIDTH: float = 200.0
+## Matches ArenaVisuals' outer platform substructure margin so the camera's
+## scrolling boundary lines up exactly with the edge of the walkable deck
+## (see ArenaVisuals._draw_deck_layer's outer_hl/outer_hw) -- the camera can
+## pan anywhere across the whole floating arena but never past its edge
+## into the surrounding void.
+const CAMERA_BOUNDARY_MARGIN_LENGTH: float = 180.0
+const CAMERA_BOUNDARY_MARGIN_WIDTH: float = 25.0
 const NAV_PADDING: float = 100.0
 const WAVE_INTERVAL_SEC: float = 20.0
 const MINIONS_PER_WAVE: int = 3
@@ -31,6 +43,7 @@ const ItemShopScene: PackedScene = preload("res://ui/shop/ItemShop.tscn")
 @onready var nav_region: NavigationRegion2D = $NavigationRegion2D
 @onready var minions_root: Node2D = $Minions
 @onready var camera: Camera2D = $Camera2D
+@onready var arena_visuals: ArenaVisuals = $ArenaVisuals
 
 var _wave_timer: float = 0.0
 var _base_a: MainBuilding
@@ -41,6 +54,9 @@ var _hud: HUD
 var _shop: ItemShop
 
 func _ready() -> void:
+	arena_visuals.configure(LANE_HALF_LENGTH, LANE_HALF_WIDTH)
+	arena_visuals.set_camera(camera)
+	_configure_camera_scroll_boundaries()
 	_build_navigation()
 	MatchEconomy.register_player(0)
 	MatchEconomy.register_player(1)
@@ -111,9 +127,22 @@ func _spawn_enemy_hero() -> void:
 	_enemy_hero.position = _base_b.position - Vector2(140.0, 0.0)
 	add_child(_enemy_hero)
 
+## Clamps the camera to the arena's playable footprint so scrolling never
+## reveals the empty void past the edge of the floating deck -- the camera
+## is free to pan the full length/width of the (now 4x larger) lane while
+## following the player, but stops exactly at the platform's outer edge.
+func _configure_camera_scroll_boundaries() -> void:
+	var boundary_hl: float = LANE_HALF_LENGTH * 0.25 + CAMERA_BOUNDARY_MARGIN_LENGTH
+	var boundary_hw: float = LANE_HALF_WIDTH + CAMERA_BOUNDARY_MARGIN_WIDTH
+	camera.limit_left = int(-boundary_hl)
+	camera.limit_right = int(boundary_hl)
+	camera.limit_top = int(-boundary_hw)
+	camera.limit_bottom = int(boundary_hw)
+	camera.limit_smoothed = true
+
 func _build_navigation() -> void:
 	var nav_poly := NavigationPolygon.new()
-	var hl: float = LANE_HALF_LENGTH + NAV_PADDING
+	var hl: float = LANE_HALF_LENGTH * 0.25 + NAV_PADDING
 	var hw: float = LANE_HALF_WIDTH
 	nav_poly.vertices = PackedVector2Array([
 		Vector2(-hl, -hw), Vector2(hl, -hw), Vector2(hl, hw), Vector2(-hl, hw),
