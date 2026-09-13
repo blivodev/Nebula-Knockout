@@ -20,3 +20,7 @@ node_modules/
 
 # GDAI MCP local state
 addons/gdai-mcp-plugin-godot/.godot_ai_logs/
+
+# Archives & installers
+*.zip
+gdai-mcp-plugin-godot*.zip
