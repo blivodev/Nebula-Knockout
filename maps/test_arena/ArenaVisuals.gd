@@ -64,6 +64,10 @@ const PARALLAX_DECK: float = 1.0
 @export var lane_half_width: float = 200.0
 
 var _time: float = 0.0
+var _redraw_accum: float = 0.0
+
+## Minimum seconds between background redraws (see _process).
+const REDRAW_INTERVAL: float = 1.0 / 30.0
 
 ## The camera this backdrop parallaxes against. Set by TestArena after
 ## instancing so every layer's lag is measured from the same source of
@@ -82,7 +86,14 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_time += delta
-	queue_redraw()
+	# Throttle backdrop redraws to ~30fps: the _draw() cost scales with the
+	# lane length (stars/planets/debris plus the deck tile/conduit/pylon
+	# loops), and redrawing every rendered frame is more than the animation
+	# needs -- the twinkle/glow/debris drift stays smooth at 30fps.
+	_redraw_accum += delta
+	if _redraw_accum >= REDRAW_INTERVAL:
+		_redraw_accum = 0.0
+		queue_redraw()
 
 ## Called by TestArena before the first frame to match this backdrop to
 ## whatever lane dimensions the arena is actually using. Regenerates the
@@ -286,6 +297,32 @@ func _draw_deck_layer(hl: float, hw: float, outer_hl: float, outer_hw: float, in
 	for x in range(-seam_edge, seam_edge + 20, 120):
 		draw_line(Vector2(float(x), -(deck_hw - 2.0)), Vector2(float(x), deck_hw - 2.0), Color(0.18, 0.21, 0.28, 0.6), 1.5)
 
+	# 8a. Cross-panels: perpendicular seams break the deck into tile slabs so
+	# it reads as a built platform rather than one flat dark rectangle.
+	var cross_step: int = 300
+	for x in range(int(-deck_hl) + cross_step / 2, int(deck_hl) - cross_step / 2, cross_step):
+		draw_line(Vector2(float(x), -deck_hw), Vector2(float(x), deck_hw), Color(0.16, 0.18, 0.25, 0.35), 1.0)
+
+	# 8b. Edge energy conduits running the full length of the lane -- glowing
+	# power rails just inside the guard edges that visibly channel toward the
+	# bases, making the long stretch feel populated instead of empty.
+	var conduit_y: float = deck_hw - 18.0
+	var conduit_hl: float = deck_hl - 8.0
+	for cx in range(-conduit_hl, conduit_hl, 140):
+		var glow := 0.5 + 0.25 * sin(_time * 2.0 + float(cx) * 0.02)
+		draw_rect(Rect2(float(cx), -conduit_y, 74.0, 3.0), Color(0.2, 0.7, 1.0, 0.5 * glow))
+		draw_rect(Rect2(float(cx), conduit_y, 74.0, 3.0), Color(0.2, 0.7, 1.0, 0.5 * glow))
+
+	# 8c. Scattered ambient gripper marks / hazard chevrons on the outer deck
+	# shoulders so the platform edge isn't featureless.
+	for hx in range(-deck_hl, deck_hl, 260):
+		var chev := Color(0.28, 0.32, 0.42, 0.5)
+		draw_line(Vector2(float(hx), -(deck_hw - 8.0)), Vector2(float(hx + 14), -(deck_hw - 8.0)), chev, 2.0)
+		draw_line(Vector2(float(hx) + 7, -(deck_hw - 8.0)), Vector2(float(hx) + 21, -(deck_hw - 8.0)), chev, 2.0)
+		draw_line(Vector2(float(hx), (deck_hw - 8.0)), Vector2(float(hx + 14), (deck_hw - 8.0)), chev, 2.0)
+		draw_line(Vector2(float(hx) + 7, (deck_hw - 8.0)), Vector2(float(hx) + 21, (deck_hw - 8.0)), chev, 2.0)
+
+
 	# 9. Team-Colored Lane Trim
 	var trim_y: float = deck_hw - 4.0
 	# Team A (Blue side: -deck_hl to 0)
@@ -327,9 +364,12 @@ func _draw_deck_layer(hl: float, hw: float, outer_hl: float, outer_hw: float, in
 	draw_line(pos_b - Vector2(80, -40), pos_b - Vector2(160, -40), Color(1.0, 0.35, 0.35, 0.7), 2.0)
 	draw_line(pos_b - Vector2(80, 40), pos_b - Vector2(160, 40), Color(1.0, 0.35, 0.35, 0.7), 2.0)
 
-	# 14. Rail Pylons Along Lane Edges (evenly spread across the lane)
-	for frac in [-0.8, -0.525, -0.25, 0.0, 0.25, 0.525, 0.8]:
-		var px: float = frac * hl
+	# 14. Rail Pylons Along Lane Edges (evenly spread the full lane length so
+	# the longer map stays visually populated -- one pylon pair per ~1400u)
+	var pylons_per_half: int = maxi(4, int(round(hl / 1400.0)))
+	var pylon_step: float = float(hl) / float(pylons_per_half)
+	for i in range(-pylons_per_half, pylons_per_half + 1):
+		var px: float = float(i) * pylon_step
 		var col_p := Color(0.25, 0.7, 1.0) if px < 0.0 else (Color(1.0, 0.4, 0.4) if px > 0.0 else Color(0.9, 0.85, 0.3))
 		# Upper pylon
 		draw_rect(Rect2(px - 6.0, -(hw + 4.0), 12.0, 10.0), col_p)

@@ -33,9 +33,9 @@ const GroundZoneScene: PackedScene = preload("res://entities/ground_zone/GroundZ
 @export var is_player_controlled: bool = false
 ## When true and not player controlled, executes lane bot AI.
 @export var is_bot: bool = false
-## Adds a procedural HeroAnimator to the "Visual" child (idle bob, walk sway,
-## cast pop, hit flash, dash stretch). Set false in tests that assert on the
-## Visual transform directly.
+## Adds a limb-based CombatRigAnimator rig to the hero (walking swings the
+## arms/legs, casting strikes, idle breathes, hit flinches, dash stretches).
+## Set false in tests that assert on the Visual transform directly.
 @export var visual_animation_enabled: bool = true
 
 var state: State = State.IDLE
@@ -86,10 +86,10 @@ func _setup_animator() -> void:
 	var visual: Node2D = get_node_or_null("Visual") as Node2D
 	if visual == null:
 		return
-	var animator := HeroAnimator.new()
-	animator.name = "HeroAnimator"
+	var animator := CombatRigAnimator.new()
+	animator.name = "CombatRigAnimator"
 	add_child(animator)
-	animator.setup(self, visual)
+	animator.setup(self)
 
 ## Puts the body/hurtbox on this hero's team layer and the hitbox on the
 ## dedicated hitbox layer with an enemy-team mask, so attacks reach enemy

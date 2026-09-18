@@ -67,6 +67,13 @@ func _ready() -> void:
 		visual.modulate = _team_tint
 		visual.play("idle")
 
+	# Articulated creature legs under the flipbook body (scuttle on walk,
+	# stand on idle, brace on attack), layered on top of the torso animation.
+	var rig := MinionRigAnimator.new()
+	rig.name = "MinionRigAnimator"
+	add_child(rig)
+	rig.setup(self)
+
 	var own_bit: int = TEAM_A_LAYER_BIT if team == MatchState.Team.TEAM_A else TEAM_B_LAYER_BIT
 	var enemy_bit: int = TEAM_B_LAYER_BIT if team == MatchState.Team.TEAM_A else TEAM_A_LAYER_BIT
 	set_collision_layer_value(own_bit, true)

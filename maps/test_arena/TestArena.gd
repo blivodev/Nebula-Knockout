@@ -132,7 +132,7 @@ func _spawn_enemy_hero() -> void:
 ## is free to pan the full length/width of the (now 4x larger) lane while
 ## following the player, but stops exactly at the platform's outer edge.
 func _configure_camera_scroll_boundaries() -> void:
-	var boundary_hl: float = LANE_HALF_LENGTH * 0.25 + CAMERA_BOUNDARY_MARGIN_LENGTH
+	var boundary_hl: float = LANE_HALF_LENGTH + CAMERA_BOUNDARY_MARGIN_LENGTH
 	var boundary_hw: float = LANE_HALF_WIDTH + CAMERA_BOUNDARY_MARGIN_WIDTH
 	camera.limit_left = int(-boundary_hl)
 	camera.limit_right = int(boundary_hl)
@@ -142,7 +142,7 @@ func _configure_camera_scroll_boundaries() -> void:
 
 func _build_navigation() -> void:
 	var nav_poly := NavigationPolygon.new()
-	var hl: float = LANE_HALF_LENGTH * 0.25 + NAV_PADDING
+	var hl: float = LANE_HALF_LENGTH + NAV_PADDING
 	var hw: float = LANE_HALF_WIDTH
 	nav_poly.vertices = PackedVector2Array([
 		Vector2(-hl, -hw), Vector2(hl, -hw), Vector2(hl, hw), Vector2(-hl, hw),
