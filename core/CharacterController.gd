@@ -50,6 +50,13 @@ var move_speed: float = 0.0
 var dash_speed: float = 0.0
 var _bot_think_timer: float = 0.0
 
+## Player dash-leap (Space): a short burst along the current facing with a
+## hop, reusing the DASH state so the CombatRigAnimator already animates the
+## lean/stretch. Seconds remaining; 0 = not leaping.
+var _leap_timer: float = 0.0
+const LEAP_DURATION: float = 0.2
+const LEAP_FACTOR: float = 1.5
+
 var _hitstun_timer: float = 0.0
 var _block_active: bool = false
 var _active_ability: AbilityDefinition = null
@@ -124,6 +131,18 @@ func _physics_process(delta: float) -> void:
 			_process_ability_frames(delta)
 		State.DEAD:
 			return
+		State.DASH:
+			# Dash-leap (Space): hold the burst velocity for the leap duration,
+			# then release back into normal movement/idle.
+			_leap_timer = maxf(0.0, _leap_timer - delta)
+			var moving: bool = Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_S)
+			if _leap_timer > 0.0:
+				velocity = velocity.move_toward(facing.normalized() * dash_speed * LEAP_FACTOR, 1200.0 * delta)
+			elif moving:
+				_handle_player_movement()
+			else:
+				velocity = Vector2.ZERO
+				_set_state(State.IDLE)
 		_:
 			if is_player_controlled:
 				_handle_player_movement()
@@ -146,6 +165,21 @@ func _unhandled_input(event: InputEvent) -> void:
 				_on_skill_pressed(2)
 			KEY_F:
 				_on_skill_pressed(3)
+			KEY_SPACE:
+				_trigger_leap()
+
+## Space: perform a short dash-leap along the current facing direction.
+## Reuses the DASH state (which the combat rig animates). No-op while
+## casting, hit-stunned, or dead.
+func _trigger_leap() -> void:
+	if state == State.CASTING or state == State.HIT or state == State.DEAD:
+		return
+	if _leap_timer > 0.0:
+		return
+	_leap_timer = LEAP_DURATION
+	if facing != Vector2.ZERO:
+		velocity = facing.normalized() * dash_speed * LEAP_FACTOR
+	_set_state(State.DASH)
 
 ## Default skill mapping: Q/E/R/F cast skill_1/skill_2/skill_3/ultimate.
 ## Projectile (SKILLSHOT) and AOE abilities are handled generically by the

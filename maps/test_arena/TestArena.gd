@@ -12,7 +12,11 @@ extends Node2D
 ## walk (and the camera has to follow) to see the rest of it.
 
 const LANE_HALF_LENGTH: float = 32000.0
-const LANE_HALF_WIDTH: float = 200.0
+# Road spans the visible screen width (the ~1800-unit-tall viewport at the
+# camera's 0.6 zoom) with margin left for roaming -- no more thin central
+# strip. Length stays the long-scroll axis; width gives the player room to
+# sidestep/juke and to see the arena fill the screen.
+const LANE_HALF_WIDTH: float = 1600.0
 ## Matches ArenaVisuals' outer platform substructure margin so the camera's
 ## scrolling boundary lines up exactly with the edge of the walkable deck
 ## (see ArenaVisuals._draw_deck_layer's outer_hl/outer_hw) -- the camera can

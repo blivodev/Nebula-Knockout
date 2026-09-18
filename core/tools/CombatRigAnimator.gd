@@ -61,6 +61,9 @@ var _base_scale: Vector2 = Vector2.ONE
 func setup(controller: CharacterController) -> void:
 	_controller = controller
 	var tint: Color = Color.WHITE
+	var hero_id := ""
+	if controller.hero_definition != null and not controller.hero_definition.hero_id.is_empty():
+		hero_id = controller.hero_definition.hero_id
 	var old_visual := controller.get_node_or_null("Visual") as Node2D
 	if old_visual != null:
 		var tex: Texture2D = null
@@ -69,26 +72,56 @@ func setup(controller: CharacterController) -> void:
 			tint = HeroRigAnimator.average_tint(tex)
 		old_visual.visible = false
 
+	# Per-hero identity: a stable accent hue + torso emblem derived from the
+	# hero id so every drafted hero reads as a distinct character silhouette
+	# instead of the same tinted rectangle.
+	var accent: Color = _hero_accent(hero_id)
+
 	_root = Node2D.new()
 	_root.name = "CombatRig"
 	_root.z_index = 0
 	_root.scale = Vector2.ONE
 	_base_scale = _root.scale
 	controller.add_child(_root)
-	_build_limbs(tint)
+	_build_limbs(tint, accent, hero_id)
 	# Feet sit on the body origin: torso center is half the leg+torso height
 	# above the feet, so we raise the torso by the leg stack.
 	_torso.position = Vector2(0.0, -UPPER_LEG_SIZE.y - LOWER_LEG_SIZE.y)
 
 	controller.state_changed.connect(_on_state_changed)
 
-## Builds the limb hierarchy: torso (root of the upper body) with head and
-## two articulated arms, plus two articulated legs hanging from the hips.
-func _build_limbs(tint: Color) -> void:
+## Deterministic accent palette from a hero id, so each hero keeps a
+## distinctive, stable accent color across matches.
+static func _hero_accent(hero_id: String) -> Color:
+	if hero_id == "":
+		return Color(0.3, 0.85, 1.0, 1.0)
+	var hash: int = absi(hash(hero_id))
+	var palette: Array = [
+		Color(0.3, 0.85, 1.0, 1.0),  # azure
+		Color(1.0, 0.35, 0.4, 1.0),  # crimson
+		Color(0.35, 1.0, 0.5, 1.0),  # emerald
+		Color(1.0, 0.75, 0.2, 1.0),  # amber
+		Color(0.75, 0.4, 1.0, 1.0),  # violet
+		Color(1.0, 0.5, 0.25, 1.0),  # ember
+		Color(0.2, 1.0, 1.0, 1.0),   # cyan
+		Color(1.0, 0.25, 0.7, 1.0),  # magenta
+	]
+	return palette[hash % palette.size()]
+
+## Builds the limb hierarchy: torso (root of the upper body) with head (tinted
+## with the per-hero accent so it reads as a distinct head/helmet), two
+## articulated arms, and two articulated legs hanging from the hips.
+func _build_limbs(tint: Color, accent: Color, hero_id: String) -> void:
 	_torso = _limb("Torso", TORSO_SIZE, tint, Vector2.ZERO, Vector2.ZERO, true)
 	_root.add_child(_torso)
+	# Torso emblem -- a small accent chevron so the body isn't a plain slab.
+	var emblem := Sprite2D.new()
+	emblem.name = "Emblem"
+	emblem.texture = _make_limb_texture(Vector2(14.0, 10.0), accent)
+	emblem.centered = true
+	_torso.add_child(emblem)
 
-	_head = _limb("Head", HEAD_SIZE, tint.lightened(0.15), Vector2(0.0, -TORSO_SIZE.y * 0.5), Vector2.ZERO, true)
+	_head = _limb("Head", HEAD_SIZE, accent, Vector2(0.0, -TORSO_SIZE.y * 0.5), Vector2.ZERO, true)
 	_torso.add_child(_head)
 
 	var shoulder_y := -TORSO_SIZE.y * 0.32
